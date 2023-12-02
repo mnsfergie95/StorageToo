@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="687.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="searcher.controller.PaymentController">
+   <children>
+      <SplitPane dividerPositions="0.5008460236886633" layoutX="3.0" layoutY="49.0" prefHeight="346.0" prefWidth="681.0">
+        <items>
+          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="344.0" prefWidth="308.0">
+               <children>
+                  <Button fx:id="btnPmtHistory" layoutX="244.0" layoutY="71.0" mnemonicParsing="false" onAction="#getPaymentHistory" text="Pmt History" />
+                  <Label fx:id="lblUnit" layoutX="14.0" layoutY="34.0" text="Unit:" />
+                  <Label layoutX="45.0" layoutY="115.0" text="Result" />
+                  <Button fx:id="btnRecvPmt" layoutX="136.0" layoutY="71.0" mnemonicParsing="false" onAction="#pmtCommit" text="Receive Pmt" />
+                  <Button fx:id="btnWhatOwed" layoutX="18.0" layoutY="71.0" mnemonicParsing="false" onAction="#calculateAndDisplayAmtOwed" text="What's Owed" />
+                  <ComboBox fx:id="cmbUnit" layoutX="58.0" layoutY="30.0" prefWidth="150.0" />
+                  <ScrollPane fx:id="scrollResult" layoutX="51.0" layoutY="132.0" prefHeight="200.0" prefWidth="200.0">
+                    <content>
+                      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="200.0" />
+                    </content>
+                  </ScrollPane>
+               </children>
+            </AnchorPane>
+          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="344.0" prefWidth="306.0">
+               <children>
+                  <TableView fx:id="paymentsTable" layoutX="22.0" layoutY="23.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="200.0" prefWidth="228.0">
+                    <columns>
+                      <TableColumn fx:id="paymentDateColumn" prefWidth="75.0" text="Date" />
+                      <TableColumn fx:id="paymentAmountColumn" prefWidth="75.0" text="Amount" />
+                        <TableColumn fx:id="paymentUnitColumn" prefWidth="75.0" text="Unit" />
+                    </columns>
+                  </TableView>
+                  <Button fx:id="btnPrint" layoutX="127.0" layoutY="260.0" mnemonicParsing="false" onAction="#printNow" text="Print" />
+               </children>
+            </AnchorPane>
+        </items>
+      </SplitPane>
+      <Label layoutX="305.0" layoutY="8.0" text="Payments" textFill="#ab5959">
+         <font>
+            <Font name="Brush Script MT Italic" size="30.0" />
+         </font>
+      </Label>
+   </children>
+</AnchorPane>

@@ -1,0 +1,23 @@
+Notes
+
+1.  New lessee.  Get data.  Enter into payment in db initial payment and next due date.
+
+
+
+
+
+
+
+
+
+
+
+
+
+Business Rules
+
+Due on the 1st of the month
+
+15 days past due    Late Fee $15
+30 days past due    Late Fee $30
+45 days past due    Evict
