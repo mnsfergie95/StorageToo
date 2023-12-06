@@ -229,13 +229,11 @@ public class PaymentController {
     private void pmtCommit() throws SQLException, IOException, ClassNotFoundException {
         String Input = cmbUnit.getValue();
         if (Input != null) {
-            if (amtTotalOwed == 0.0) {
-                try {
-                    getAmtOwed();
-                } catch (SQLException e) {
-                    System.out.println("Error occurred with getAmt in pmtCommit method" + e);
-                    throw e;
-                }
+            try {
+                getAmtOwed();
+            } catch (SQLException e) {
+                System.out.println("Error occurred with getAmt in pmtCommit method" + e);
+                throw e;
             }
             unitString = Input;
             Stage newWindow = new Stage();
