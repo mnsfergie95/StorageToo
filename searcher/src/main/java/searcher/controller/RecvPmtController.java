@@ -13,11 +13,14 @@ public class RecvPmtController {
     private TextField txtUnit;
     @FXML
     private TextField txtAmount;
+
+    private LocalDate newDueDate; 
     
     @FXML
     private void initialize () throws SQLException, ClassNotFoundException {
         String unitTitle = PaymentController.unitString;
         Double amtOwed = PaymentController.amtTotalOwed;
+        newDueDate = PaymentController.newNextDueDate;
         NumberFormat currencyFormatter = NumberFormat.getCurrencyInstance(Locale.getDefault());
         txtUnit.setText(unitTitle);
         txtAmount.setText(currencyFormatter.format(amtOwed));
@@ -25,7 +28,7 @@ public class RecvPmtController {
 
     @FXML
     private void pmtCommit() {
-
+        
     }
 
 }
