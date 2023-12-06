@@ -44,6 +44,9 @@ public class PaymentController {
     private TableColumn<Payment, Double> paymentAmountColumn;
     @FXML
     private TableColumn<Payment, String>  paymentUnitColumn;
+
+    //newDueDate
+    public static LocalDate newNextDueDate;
     //total amount owed
     public static Double amtTotalOwed;
     //unit title
@@ -91,6 +94,7 @@ public class PaymentController {
         }
 
         //initialize variables
+        newNextDueDate = null;
         amtTotalOwed = 0.0;  //initialize to 0.0
         daysLate = 0;
         monthlyAmt = 0.0;
@@ -144,6 +148,7 @@ public class PaymentController {
                 if (pmt != null) {
                     monthlyAmt = PaymentDAO.getMonthlyAmt(whichUnitString);
                     LocalDate nextDueDate = pmt.getPmtDueDate().toLocalDate();
+                    newNextDueDate = nextDueDate.addMonths(1);
                     LocalDate now = LocalDate.now();
                     LocalDate fortyFiveDaysLate = nextDueDate.plusDays(45);
                     LocalDate thirtyDaysLate = nextDueDate.plusDays(30);
