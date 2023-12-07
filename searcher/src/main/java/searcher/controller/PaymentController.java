@@ -12,7 +12,6 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableView;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
@@ -45,18 +44,20 @@ public class PaymentController {
     @FXML
     private TableColumn<Payment, String>  paymentUnitColumn;
 
-    //newDueDate
-    public static LocalDate newNextDueDate;
     //total amount owed
     public static Double amtTotalOwed;
     //unit title
     public static String unitString;
+    //increment due date by 1 month
+    public static LocalDate newNextDueDate;
+    
     //days late
     private Integer daysLate;
     //regular monthly amount
     private Double monthlyAmt;
     //late fee
     private Double amtLate;
+    
 
     @FXML
     private void initialize () throws SQLException, ClassNotFoundException {
@@ -94,11 +95,11 @@ public class PaymentController {
         }
 
         //initialize variables
-        newNextDueDate = null;
         amtTotalOwed = 0.0;  //initialize to 0.0
         daysLate = 0;
         monthlyAmt = 0.0;
         amtLate = 0.0;  //initialize to 0.0
+        newNextDueDate = null;
         unitString = "";
     }
 
@@ -119,7 +120,7 @@ public class PaymentController {
         }
     }
 
-    //Populate Payments
+    //Populate Payments on TableView
     @FXML
     private void populatePayments (ObservableList<Payment> pmtData) throws ClassNotFoundException {
         //Set items to the paymentsTable
@@ -148,7 +149,7 @@ public class PaymentController {
                 if (pmt != null) {
                     monthlyAmt = PaymentDAO.getMonthlyAmt(whichUnitString);
                     LocalDate nextDueDate = pmt.getPmtDueDate().toLocalDate();
-                    newNextDueDate = nextDueDate.addMonths(1);
+                    newNextDueDate = nextDueDate.plusMonths(1);
                     LocalDate now = LocalDate.now();
                     LocalDate fortyFiveDaysLate = nextDueDate.plusDays(45);
                     LocalDate thirtyDaysLate = nextDueDate.plusDays(30);
@@ -226,7 +227,7 @@ public class PaymentController {
 
     //Show payment commit window
     @FXML
-    private void pmtCommit() throws SQLException, IOException, ClassNotFoundException {
+    private void pmtCommit(ActionEvent actionEvent) throws SQLException, IOException, ClassNotFoundException {
         String Input = cmbUnit.getValue();
         if (Input != null) {
             try {

@@ -2,10 +2,12 @@ package searcher.controller;
 
 import java.sql.SQLException;
 import java.text.NumberFormat;
+import java.time.LocalDate;
 import java.util.Locale;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
+import searcher.util.DBUtil;
 
 public class RecvPmtController {
     
@@ -14,12 +16,15 @@ public class RecvPmtController {
     @FXML
     private TextField txtAmount;
 
-    private LocalDate newDueDate; 
+    //declare class variables
+    private String unitTitle;
+    private Double amtOwed;
+    private LocalDate newDueDate;
     
     @FXML
     private void initialize () throws SQLException, ClassNotFoundException {
-        String unitTitle = PaymentController.unitString;
-        Double amtOwed = PaymentController.amtTotalOwed;
+        unitTitle = PaymentController.unitString;
+        amtOwed = PaymentController.amtTotalOwed;
         newDueDate = PaymentController.newNextDueDate;
         NumberFormat currencyFormatter = NumberFormat.getCurrencyInstance(Locale.getDefault());
         txtUnit.setText(unitTitle);
@@ -27,7 +32,16 @@ public class RecvPmtController {
     }
 
     @FXML
-    private void pmtCommit() {
+    private void pmtCommit() throws SQLException, ClassNotFoundException {
+        LocalDate now = LocalDate.now();
+        try {
+            String SqlStmt = "CALL procCommitPmt('" + unitTitle + "', '" + amtOwed + "','" + now + "','" + newDueDate + "')";
+            DBUtil.dbExecuteUpdate(SqlStmt);
+        } catch (SQLException e) {
+            System.out.println("Error occurred while inserting payment amount to DB.\n" + e);
+            throw e;
+        } 
+
         
     }
 
