@@ -204,6 +204,12 @@ public class LesseeController {
                 e.printStackTrace();
                 resultArea.setText("Error occurred while adding lessee to DB.\n" + e);
             }
+            //calculate partial payment
+
+            static int getLastDayOfMonthUsingYearMonth(YearMonth date) {
+                return date.atEndOfMonth().getDayOfMonth();
+            }
+            
             //popup a dialog showing successful lessee addition to DB 
             Dialog<String> dialog = new Dialog<String>();
             dialog.setTitle("Success!");
