@@ -195,6 +195,13 @@ public class LesseeController {
                 e.printStackTrace();
                 resultArea.setText("Error occurred while adding lessee to DB.\n" + e);
             }
+            //popup a dialog showing successful lessee addition to DB 
+            Dialog<String> dialog = new Dialog<String>();
+            dialog.setTitle("Success!");
+            ButtonType type = new ButtonType("Ok", ButtonData.OK_DONE);
+            dialog.setContentText("Payment successfully added to DB");
+            dialog.getDialogPane().getButtonTypes().add(type);
+            dialog.showAndWait();
         }
     }
 
