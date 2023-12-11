@@ -22,7 +22,7 @@ import searcher.util.printMe;
 
 import java.io.IOException;
 
-import java.sql.Date;
+import java.sql.Timestamp;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.NumberFormat;
@@ -38,7 +38,7 @@ public class PaymentController {
     @FXML
     private TableView<Payment> paymentsTable;
     @FXML
-    private TableColumn<Payment, Date> paymentDateColumn;
+    private TableColumn<Payment, Timestamp> paymentDateColumn;
     @FXML
     private TableColumn<Payment, Double> paymentAmountColumn;
     @FXML

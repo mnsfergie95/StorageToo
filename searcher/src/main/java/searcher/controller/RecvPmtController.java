@@ -6,7 +6,13 @@ import java.time.LocalDate;
 import java.util.Locale;
 
 import javafx.fxml.FXML;
+import javafx.stage.Stage;
+import javafx.scene.control.Dialog;
+import javafx.scene.control.ButtonBar.ButtonData;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Button;
+
 import searcher.util.DBUtil;
 
 public class RecvPmtController {
@@ -15,6 +21,8 @@ public class RecvPmtController {
     private TextField txtUnit;
     @FXML
     private TextField txtAmount;
+    @FXML
+    private Button btnCommit;
 
     //declare class variables
     private String unitTitle;
@@ -33,16 +41,22 @@ public class RecvPmtController {
 
     @FXML
     private void pmtCommit() throws SQLException, ClassNotFoundException {
-        LocalDate now = LocalDate.now();
         try {
-            String SqlStmt = "CALL procCommitPmt('" + unitTitle + "', '" + amtOwed + "','" + now + "','" + newDueDate + "')";
-            DBUtil.dbExecuteUpdate(SqlStmt);
+            DBUtil.dbCommitPmt(unitTitle, amtOwed, newDueDate);
         } catch (SQLException e) {
             System.out.println("Error occurred while inserting payment amount to DB.\n" + e);
             throw e;
-        } 
-
-        
+        }
+        //popup a dialog showing successful payment addition to DB 
+        Dialog<String> dialog = new Dialog<String>();
+        dialog.setTitle("Success!");
+        ButtonType type = new ButtonType("Ok", ButtonData.OK_DONE);
+        dialog.setContentText("Payment successfully added to DB");
+        dialog.getDialogPane().getButtonTypes().add(type);
+        dialog.showAndWait();
+        //close receive pmt window
+        Stage stage = (Stage) btnCommit.getScene().getWindow();
+        stage.close();
     }
 
 }
