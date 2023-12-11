@@ -12,6 +12,12 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Dialog;
+import javafx.scene.control.ButtonBar.ButtonData;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.TextField;
+import javafx.scene.control.Button;
+
 
 import searcher.model.Lessee;
 import searcher.model.LesseeDAO;
@@ -191,6 +197,9 @@ public class LesseeController {
                 Integer unitID = LesseeDAO.getUnitID(unitLabel);
                 Integer zip = Integer.parseInt(zipText.getText());
                 LesseeDAO.insertLessee(unitID, nameText.getText(), addrL1Text.getText(), addrL2Text.getText(), cityText.getText(), stateText.getText(), zip, phoneText.getText(), yes);
+                //Calculate partial pmt to end of month
+                //Display in a new window
+                //Add partial pmt to payment table in DB
             } catch (SQLException e) {
                 e.printStackTrace();
                 resultArea.setText("Error occurred while adding lessee to DB.\n" + e);
