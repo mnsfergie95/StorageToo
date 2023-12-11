@@ -183,16 +183,18 @@ public class LesseeController {
     //Add a lessee to DB
     @FXML
     private void insertLessee (ActionEvent actionEvent) throws ClassNotFoundException, SQLException {
-        try {
-            //Insert Lessee info
-            Boolean yes = true;
-            String unitLabel = unitText.getText().toLowerCase();
-            Integer unitID = LesseeDAO.getUnitID(unitLabel);
-            Integer zip = Integer.parseInt(zipText.getText());
-            LesseeDAO.insertLessee(unitID, nameText.getText(), addrL1Text.getText(), addrL2Text.getText(), cityText.getText(), stateText.getText(), zip, phoneText.getText(), yes);
-        } catch (SQLException e) {
-            e.printStackTrace();
-            resultArea.setText("Error occurred while adding lessee to DB.\n" + e);
+        if ((nameText.getText() != null) and (phoneText.getText() != null) {
+            try {
+                //Insert Lessee info
+                Boolean yes = true;
+                String unitLabel = unitText.getText().toLowerCase();
+                Integer unitID = LesseeDAO.getUnitID(unitLabel);
+                Integer zip = Integer.parseInt(zipText.getText());
+                LesseeDAO.insertLessee(unitID, nameText.getText(), addrL1Text.getText(), addrL2Text.getText(), cityText.getText(), stateText.getText(), zip, phoneText.getText(), yes);
+            } catch (SQLException e) {
+                e.printStackTrace();
+                resultArea.setText("Error occurred while adding lessee to DB.\n" + e);
+            }
         }
     }
 
