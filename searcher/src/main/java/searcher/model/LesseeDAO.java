@@ -56,7 +56,7 @@ public class LesseeDAO {
     //*******************************
     public static Integer getUnitID(String unitLabel) throws SQLException, ClassNotFoundException {
         //Declare SELECT statement
-        String selectStmt = "SELECT unit_id FROM unit WHERE label = '" + unitLabel.toLowerCase() + "'";
+        String selectStmt = "SELECT unitid FROM unit WHERE label = '" + unitLabel.toLowerCase() + "'";
         //Execute SELECT statement
         try {
             //Get ResultSet from dbExecuteQuery method
@@ -64,7 +64,7 @@ public class LesseeDAO {
             //Get unitID from rsUnit
             Integer unitID = null;
             if (rsUnit.next()) {
-                unitID = rsUnit.getInt("unit_id");
+                unitID = rsUnit.getInt("unitid");
             }    
             //Return lessee object
             return unitID;
@@ -150,7 +150,7 @@ public class LesseeDAO {
         //System.out.println("sql is" + deactivateStmt);
         //Execute sql operation
         try {
-            DBUtil.dbParameterizedQuery(deactivateStmt, lesseeID);
+            DBUtil.dbDeactivateLessee(deactivateStmt, lesseeID);
         } catch (SQLException e) {
             System.out.print("Error occurred while using stored procedure procDeactivateLessee: " + e);
             throw e;
@@ -163,7 +163,7 @@ public class LesseeDAO {
     public static void insertLessee (Integer unitID, String name, String addrL1, String addrL2, String city, String state, Integer zip, String phone, Boolean active) throws SQLException, ClassNotFoundException {
         //Declare an INSERT statement
         String updateStmt = "INSERT INTO lessee VALUES (0, "+unitID+", '"+name+"', '"+addrL1+"', '"+addrL2+"', '"+city+"', '"+state+"', "+zip+", '"+phone+"', "+active+")";
-        //System.out.print("updateStmt is " + updateStmt);
+        System.out.print("updateStmt is " + updateStmt);
         //Execute UPDATE operation
         try {
             DBUtil.dbExecuteUpdate(updateStmt);
