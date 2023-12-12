@@ -15,15 +15,21 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.ButtonType;
-import javafx.scene.control.TextField;
-import javafx.scene.control.Button;
 
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.YearMonth;
+import java.time.ZoneId;
+import java.util.Locale;
 
 import searcher.model.Lessee;
 import searcher.model.LesseeDAO;
+import searcher.model.PaymentDAO;
+import searcher.util.DBUtil;
 
-//import java.sql.Date;
+import java.util.Date;
 import java.sql.SQLException;
+import java.text.NumberFormat;
 
 public class LesseeController {
     
@@ -186,37 +192,55 @@ public class LesseeController {
         }
     }
 
+    static int getLastDayOfMonth(YearMonth date) {
+        return date.atEndOfMonth().getDayOfMonth();
+    }
+
     //Add a lessee to DB
     @FXML
     private void insertLessee (ActionEvent actionEvent) throws ClassNotFoundException, SQLException {
-        if ((nameText.getText() != null) and (phoneText.getText() != null) {
+        if ((nameText.getText() != null) && (phoneText.getText() != null)) {
+            String unitLabel = unitText.getText().toLowerCase();
+            //******************** 
+            //** See if unit is available or make unit a combobox
+            //********************
+            //calculate partial payment
+            Date date = new Date();
+            YearMonth today = YearMonth.from(date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
+            LocalDate hoy = LocalDate.now();
+            Integer LastDayOfMonth = getLastDayOfMonth(today);
+            Integer DaysLeftInMonth = LastDayOfMonth - hoy.getDayOfMonth();
+            //monthlyprice*DaysLeftInMonth/lastDayOfMonth
+            Double monthlyPrice = PaymentDAO.getMonthlyAmt(unitLabel);
+            Double partialPmt = Math.round((monthlyPrice * DaysLeftInMonth / LastDayOfMonth) * 100d) / 100d;
+            LocalDate firstOfThisMonth = hoy.withDayOfMonth(1);
+            //popup a dialog showing prorated amt to end of month
+            Dialog<String> dialog = new Dialog<String>();
+            dialog.setTitle("Initial Payment");
+            ButtonType type = new ButtonType("Commit to DB", ButtonData.OK_DONE);
+            dialog.setContentText("Prorated initial payment is " + partialPmt.toString());
+            dialog.getDialogPane().getButtonTypes().add(type);
+            dialog.showAndWait();
             try {
                 //Insert Lessee info
                 Boolean yes = true;
-                String unitLabel = unitText.getText().toLowerCase();
                 Integer unitID = LesseeDAO.getUnitID(unitLabel);
                 Integer zip = Integer.parseInt(zipText.getText());
                 LesseeDAO.insertLessee(unitID, nameText.getText(), addrL1Text.getText(), addrL2Text.getText(), cityText.getText(), stateText.getText(), zip, phoneText.getText(), yes);
-                //Calculate partial pmt to end of month
-                //Display in a new window
                 //Add partial pmt to payment table in DB
+                DBUtil.dbCommitPmt(unitLabel, partialPmt, firstOfThisMonth);
             } catch (SQLException e) {
                 e.printStackTrace();
                 resultArea.setText("Error occurred while adding lessee to DB.\n" + e);
             }
-            //calculate partial payment
-
-            static int getLastDayOfMonthUsingYearMonth(YearMonth date) {
-                return date.atEndOfMonth().getDayOfMonth();
-            }
-            
             //popup a dialog showing successful lessee addition to DB 
-            Dialog<String> dialog = new Dialog<String>();
-            dialog.setTitle("Success!");
-            ButtonType type = new ButtonType("Ok", ButtonData.OK_DONE);
-            dialog.setContentText("Payment successfully added to DB");
-            dialog.getDialogPane().getButtonTypes().add(type);
-            dialog.showAndWait();
+            Dialog<String> dialogg = new Dialog<String>();
+            dialogg.setTitle("Success!");
+            ButtonType typee = new ButtonType("Ok", ButtonData.OK_DONE);
+            dialogg.setContentText("Payment successfully added to DB");
+            dialogg.getDialogPane().getButtonTypes().add(typee);
+            dialogg.showAndWait();
+            // zero out textfields
         }
     }
 
