@@ -37,7 +37,7 @@ public class LesseeController {
     @FXML
     private TextField nameText;
     @FXML
-    private TextField unitText;
+    private ComboBox cmbUnit;
     @FXML
     private TextField addrL1Text;
     @FXML
@@ -131,7 +131,19 @@ public class LesseeController {
         lesseeStateColumn.setCellValueFactory(cellData -> cellData.getValue().stateProperty());
         lesseeZipColumn.setCellValueFactory(cellData -> cellData.getValue().zipProperty().asObject());
         lesseePhoneColumn.setCellValueFactory(cellData -> cellData.getValue().phoneProperty());
-        lesseeActiveColumn.setCellValueFactory(cellData -> cellData.getValue().activeProperty().asObject());    
+        lesseeActiveColumn.setCellValueFactory(cellData -> cellData.getValue().activeProperty().asObject());
+
+        //populate combo box with unit titles
+        try {
+            ResultSet rsAvailUnits = PaymentDAO.getAllLeasedUnits();
+            while (rsAvailUnits.next()) {
+                cmbUnit.getItems().addAll(rsAvailUnits.getString("label"));
+            }
+        }  catch (SQLException e) {
+            System.out.println("SQL select operation to fill combo box has failed: " + e);
+            //Return exception
+            throw e;
+        }
     }
 
     //Show payment view
