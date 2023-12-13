@@ -241,6 +241,13 @@ public class LesseeController {
             dialogg.getDialogPane().getButtonTypes().add(typee);
             dialogg.showAndWait();
             // zero out textfields
+            nameText.setText("");
+            unitText.setText("");
+            addrL1Text.setText("");
+            addrL2Text.setText("");
+            cityText.setText("");
+            zipText.setText("");
+            phoneText.setText("");
         }
     }
 
