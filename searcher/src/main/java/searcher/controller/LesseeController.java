@@ -38,7 +38,7 @@ public class LesseeController {
     @FXML
     private TextField nameText;
     @FXML
-    private ComboBox cmbUnit;
+    private ComboBox<String> cmbUnit;
     @FXML
     private TextField addrL1Text;
     @FXML
@@ -114,7 +114,7 @@ public class LesseeController {
     //Initializing the controller class.
     //This method is automatically called after the fxml file has been loaded.
     @FXML
-    private void initialize () {
+    private void initialize () throws SQLException, ClassNotFoundException {
         /*
         The setCellValueFactory(...) that we set on the table columns are used to determine
         which field inside the Lessee objects should be used for the particular column.
