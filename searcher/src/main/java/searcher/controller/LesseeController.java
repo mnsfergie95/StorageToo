@@ -15,6 +15,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.ComboBox;
 
 import java.time.Instant;
 import java.time.LocalDate;
