@@ -255,7 +255,7 @@ public class LesseeController {
             dialogg.showAndWait();
             // zero out textfields
             nameText.setText("");
-            unitText.setText("");
+            cmbUnit.setText("");
             addrL1Text.setText("");
             addrL2Text.setText("");
             cityText.setText("");
