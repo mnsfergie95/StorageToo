@@ -136,7 +136,7 @@ public class LesseeController {
 
         //populate combo box with unit titles
         try {
-            ResultSet rsAvailUnits = PaymentDAO.getAllLeasedUnits();
+            ResultSet rsAvailUnits = LesseeDAO.getAllAvailableUnits();
             while (rsAvailUnits.next()) {
                 cmbUnit.getItems().addAll(rsAvailUnits.getString("label"));
             }
