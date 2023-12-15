@@ -7,6 +7,24 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class LesseeDAO {
+
+    //*************************************
+    //List units available
+    //*************************************
+    public static ResultSet getAllAvailableUnits () throws SQLException, ClassNotFoundException {
+        //Declare a stored procedure call statement
+        String selectStmt = "CALL procListAllAvailUnits";
+        //Execute SELECT statement
+        try {
+            //Get ResultSet from dbExecuteQuery method
+            ResultSet rsAvailUnits = DBUtil.dbExecuteQuery(selectStmt);
+            return rsAvailUnits;
+        }  catch (SQLException e) {
+            System.out.println("SQL getAllLeaseUnits operation has failed: " + e);
+            //Return exception
+            throw e;
+        }
+    }
     
     //*******************************
     //SELECT a Lessee
