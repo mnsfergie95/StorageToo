@@ -141,7 +141,7 @@ public class LesseeController {
                 cmbUnit.getItems().addAll(rsAvailUnits.getString("label"));
             }
         }  catch (SQLException e) {
-            System.out.println("SQL select operation to fill combo box has failed: " + e);
+            System.out.println("SQL select operation to fill combo box lessee availables has failed: " + e);
             //Return exception
             throw e;
         }
