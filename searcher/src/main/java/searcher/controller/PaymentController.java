@@ -25,9 +25,13 @@ import java.io.IOException;
 import java.sql.Timestamp;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.DateFormat;
 import java.text.NumberFormat;
 import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.Instant;
 import java.util.Locale;
+import java.util.Date;
 
 public class PaymentController {
 
@@ -51,6 +55,8 @@ public class PaymentController {
     //increment due date by 1 month
     public static LocalDate newNextDueDate;
     
+    //due date
+    private LocalDate nextDueDate;
     //days late
     private Integer daysLate;
     //regular monthly amount
@@ -89,7 +95,7 @@ public class PaymentController {
                 cmbUnit.getItems().addAll(rsAvailUnits.getString("label"));
             }
         }  catch (SQLException e) {
-            System.out.println("SQL select operation has failed: " + e);
+            System.out.println("SQL combo box select operation has failed: " + e);
             //Return exception
             throw e;
         }
@@ -99,6 +105,7 @@ public class PaymentController {
         daysLate = 0;
         monthlyAmt = 0.0;
         amtLate = 0.0;  //initialize to 0.0
+        nextDueDate = null;
         newNextDueDate = null;
         unitString = "";
     }
@@ -148,7 +155,7 @@ public class PaymentController {
                 pmt = PaymentDAO.getLastPayment(whichUnitString);
                 if (pmt != null) {
                     monthlyAmt = PaymentDAO.getMonthlyAmt(whichUnitString);
-                    LocalDate nextDueDate = pmt.getPmtDueDate().toLocalDate();
+                    nextDueDate = pmt.getPmtDueDate().toLocalDate();
                     newNextDueDate = nextDueDate.plusMonths(1);
                     LocalDate now = LocalDate.now();
                     LocalDate fortyFiveDaysLate = nextDueDate.plusDays(45);
@@ -198,7 +205,14 @@ public class PaymentController {
             text1.setFill(Color.BLACK);
             Text text2 = new Text(amtDisplay);
             text2.setFill(Color.RED);
-            textFlow.getChildren().addAll(text1, text2);
+            Locale locale = new Locale.Builder().setLanguage("en").setRegion("US").build();
+            DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.DEFAULT, locale);
+            Instant newNextDueDatee = nextDueDate.atStartOfDay(ZoneId.of("America/Los_Angeles")).toInstant();
+            Date newNextDuueDate = Date.from(newNextDueDatee);                                  
+            String date = dateFormat.format(newNextDuueDate);
+            Text text3 = new Text("\nDue on " + date);
+            text3.setFill(Color.BLACK);
+            textFlow.getChildren().addAll(text1, text2, text3);
         }
         if (daysLate == 15) {
             amtDisplay = currencyFormatter.format(amtTotalOwed);
@@ -206,8 +220,14 @@ public class PaymentController {
             text1.setFill(Color.BLACK);
             Text text2 = new Text(amtDisplay);
             text2.setFill(Color.RED);
-            textFlow.setPrefWidth(200);
-            textFlow.getChildren().addAll(text1, text2);
+            Locale locale = new Locale.Builder().setLanguage("en").setRegion("US").build();
+            DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.DEFAULT, locale);
+            Instant newNextDueDatee = nextDueDate.atStartOfDay(ZoneId.of("America/Los_Angeles")).toInstant();
+            Date newNextDuueDate = Date.from(newNextDueDatee);                                  
+            String date = dateFormat.format(newNextDuueDate);
+            Text text3 = new Text("\nDue on " + date);
+            text3.setFill(Color.BLACK);
+            textFlow.getChildren().addAll(text1, text2, text3);
         }
         if (daysLate == 0) {
             amtDisplay = currencyFormatter.format(monthlyAmt);
@@ -215,7 +235,14 @@ public class PaymentController {
             text1.setFill(Color.BLACK);
             Text text2 = new Text(amtDisplay);
             text2.setFill(Color.RED);
-            textFlow.getChildren().addAll(text1, text2);
+            Locale locale = new Locale.Builder().setLanguage("en").setRegion("US").build();
+            DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.DEFAULT, locale);
+            Instant newNextDueDatee = nextDueDate.atStartOfDay(ZoneId.of("America/Los_Angeles")).toInstant();
+            Date newNextDuueDate = Date.from(newNextDueDatee);                                  
+            String date = dateFormat.format(newNextDuueDate);
+            Text text3 = new Text("\nDue on " + date);
+            text3.setFill(Color.BLACK);
+            textFlow.getChildren().addAll(text1, text2, text3);
         }
         if (daysLate == 99) {
             Text text1 = new Text("Get payment amount returned null");
