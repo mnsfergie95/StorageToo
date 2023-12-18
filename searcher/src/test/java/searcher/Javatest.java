@@ -37,8 +37,7 @@ public class Javatest
     public void testPaymentID1() throws ClassNotFoundException, SQLException {
         String answer = null;
         try {
-            Payment payment = PaymentDAO.searchLessee(1);
-            answer = payment.getLesseeName();
+            ObservableList<Payment> answer = PaymentDAO.searchPayments("a1");
         } catch (SQLException e){
             System.out.println("Error occurred while getting lessees information from DB.\n" + e);
             throw e;
