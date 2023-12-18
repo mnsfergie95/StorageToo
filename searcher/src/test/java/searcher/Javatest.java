@@ -18,7 +18,7 @@ public class Javatest
     @Test
     @DisplayName("test if lesseename is John Smith when lessee_id = 1")
     
-    public void testDB() throws ClassNotFoundException, SQLException {
+    public void testLesseeNameOnUnit1() throws ClassNotFoundException, SQLException {
         String result = "John Smith"; //lesseeid is 1
         String answer = null;
         try {
@@ -30,4 +30,18 @@ public class Javatest
         }
         assertEquals(result, answer);
     }
+
+    @Test
+    @DisplayName("test if payment is returned when pmt id is 1");
+
+    public void testPaymentID1() throws ClassNotFoundException, SQLException {
+        String answer = null;
+        try {
+            Payment payment = PaymentDAO.searchLessee(1);
+            answer = payment.getLesseeName();
+        } catch (SQLException e){
+            System.out.println("Error occurred while getting lessees information from DB.\n" + e);
+            throw e;
+        }
+        assertNotNull(answer);
 }
