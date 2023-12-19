@@ -52,7 +52,7 @@ public class LesseeController {
     @FXML
     private TextArea resultArea;
     @FXML
-    private TextField lesseeIdText;
+    private TextField lesseeNameText;
     @FXML
     private TextField searchPhoneText;
     @FXML
@@ -109,7 +109,7 @@ public class LesseeController {
                 cmbLeasedUnits.getItems().addAll(rsLeasedUnits.getString("label"));
             }
         }  catch (SQLException e) {
-            System.out.println("SQL select operation to fill combo box lessee availables has failed: " + e);
+            System.out.println("SQL select operation to fill combo boxes has failed: " + e);
             //Return exception
             throw e;
         }
@@ -120,7 +120,7 @@ public class LesseeController {
     private void searchLessee (ActionEvent actionEvent) throws ClassNotFoundException, SQLException {
         try {
             //Get Lessee information
-            Integer lesseeID = Integer.parseInt(lesseeIdText.getText());
+            String lesseeName = lesseeNameText.getText();
             Lessee lessee = LesseeDAO.searchLessee(lesseeID);
             if (lessee != null) {
                 System.out.println(lessee.getUnitLabel());
@@ -196,15 +196,15 @@ public class LesseeController {
 
     //Update lessee's phone number with the phone number which is written on phoneText field
     @FXML
-    private void updateLesseePhone (ActionEvent actionEvent) throws SQLException, ClassNotFoundException {
-        try {
-            LesseeDAO.updateLesseePhone(Integer.parseInt(lesseeIdText.getText()), phoneText.getText());
-            resultArea.setText("Phone number has been updated for, lessee id: " + lesseeIdText.getText() + "\n");
-        } catch (SQLException e) {
-            resultArea.setText("Problem occrurred while updating phone number " + e);
-            throw e;
-        }
-    }
+    //private void updateLesseePhone (ActionEvent actionEvent) throws SQLException, ClassNotFoundException {
+    //    try {
+    //        LesseeDAO.updateLesseePhone(Integer.parseInt(lesseeIdText.getText()), phoneText.getText());
+    //        resultArea.setText("Phone number has been updated for, lessee id: " + lesseeIdText.getText() + "\n");
+    //    } catch (SQLException e) {
+    //        resultArea.setText("Problem occrurred while updating phone number " + e);
+    //        throw e;
+    //    }
+    //}
 
     static int getLastDayOfMonth(YearMonth date) {
         return date.atEndOfMonth().getDayOfMonth();
@@ -271,8 +271,8 @@ public class LesseeController {
     private void deleteLessee(ActionEvent actionEvent) throws ClassNotFoundException, SQLException {
         try {
             //Delete lessee info
-            LesseeDAO.deleteLesseeWithId(lesseeIdText.getText());
-            resultArea.setText("Lessee deleted! Lessee id: " + lesseeIdText.getText() + "\n");
+            //LesseeDAO.deleteLesseeWithId(lesseeIdText.getText());
+            //resultArea.setText("Lessee deleted! Lessee id: " + lesseeIdText.getText() + "\n");
         } catch (SQLException e) {
             e.printStackTrace();
             resultArea.setText("Error occurred while deleting lessee from DB.\n" + e);
