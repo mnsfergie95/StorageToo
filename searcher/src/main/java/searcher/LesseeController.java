@@ -121,7 +121,7 @@ public class LesseeController {
         try {
             //Get Lessee information
             String lesseeName = lesseeNameText.getText();
-            Lessee lessee = LesseeDAO.searchLessee(lesseeID);
+            Lessee lessee = LesseeDAO.searchLessee(lesseeName);
             if (lessee != null) {
                 System.out.println(lessee.getUnitLabel());
             }
