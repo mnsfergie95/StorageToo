@@ -47,9 +47,9 @@ public class LesseeDAO {
     //*******************************
     //SELECT a Lessee
     //*******************************
-    public static Lessee searchLessee (Integer lesseeId) throws SQLException, ClassNotFoundException {
+    public static Lessee searchLessee (String lesseeName) throws SQLException, ClassNotFoundException {
         //Declare a SELECT statement
-        String selectStmt = "SELECT * FROM lessee LEFT JOIN unit ON lessee.unit_id = unit.unitid WHERE lessee_id="+lesseeId;
+        String selectStmt = "SELECT * FROM lessee LEFT JOIN unit ON lessee.unit_id = unit.unitid WHERE lesseename="+lesseeName;
         //Execute SELECT statement
         try {
             //Get ResultSet from dbExecuteQuery method
