@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.TableColumn?>
@@ -12,7 +12,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="420.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="searcher.controller.LesseeController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="420.0" prefWidth="679.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="searcher.controller.LesseeController">
    <children>
     <VBox layoutX="9.0" layoutY="28.0" prefWidth="67.0" spacing="12.0">
         <children>
@@ -29,7 +29,7 @@
     <VBox layoutX="81.0" layoutY="24.0" prefHeight="228.0" prefWidth="95.0" spacing="4.0">
         <children>
            <TextField fx:id="nameText" prefHeight="25.0" prefWidth="79.0" promptText="Name" />
-           <ComboBox fx:id="cmbUnit" prefHeight="25.0" prefWidth="79.0" promptText="Unit" />
+           <ComboBox fx:id="cmbAvailUnits" prefHeight="25.0" prefWidth="79.0" />
            <TextField fx:id="addrL1Text" prefHeight="25.0" prefWidth="79.0" promptText="Addr Line1" />
             <TextField fx:id="addrL2Text" prefHeight="25.0" prefWidth="79.0" promptText="Addr Line2" />
             <TextField fx:id="cityText" prefHeight="25.0" prefWidth="79.0" promptText="City" />
@@ -45,16 +45,16 @@
         </font>
     </Label>
     <TextArea fx:id="resultArea" layoutX="9.0" layoutY="304.0" prefHeight="85.0" prefWidth="167.0" wrapText="true" />
-    <Separator layoutY="22.0" prefHeight="4.0" prefWidth="600.0" />
-    <Separator layoutX="181.0" layoutY="14.0" orientation="VERTICAL" prefHeight="382.0" prefWidth="6.0" />
-    <Label layoutX="194.0" layoutY="21.0" text="Lessee ID" />
-    <Label layoutX="270.0" layoutY="21.0" text="New Phone" />
-    <TextField fx:id="lesseeIdText" layoutX="193.0" layoutY="41.0" prefHeight="25.0" prefWidth="67.0" promptText="Lessee ID" />
-    <TextField fx:id="newPhoneText" layoutX="268.0" layoutY="41.0" prefHeight="25.0" prefWidth="120.0" promptText="New Phone" />  
+    <Separator layoutY="22.0" prefHeight="2.0" prefWidth="679.0" />
+    <Separator layoutX="183.0" layoutY="14.0" orientation="VERTICAL" prefHeight="411.0" prefWidth="4.0" />
+    <Label layoutX="194.0" layoutY="21.0" text="Lessee Name" />
+    <Label layoutX="302.0" layoutY="21.0" text="Phone" />
+    <TextField fx:id="lesseeIdText" layoutX="193.0" layoutY="41.0" prefHeight="25.0" prefWidth="95.0" promptText="Lessee Name" />
+    <TextField fx:id="searchPhoneText" layoutX="301.0" layoutY="41.0" prefHeight="25.0" prefWidth="120.0" promptText="Phone" />  
     <Button fx:id="searchLesseeBtn" layoutX="194.0" layoutY="70.0" mnemonicParsing="false" onAction="#searchLessee" prefHeight="25.0" prefWidth="56.0" text="Search" />
     <Button fx:id="updateLesseeBtn" layoutX="263.0" layoutY="70.0" mnemonicParsing="false" onAction="#updateLesseePhone" prefHeight="25.0" prefWidth="56.0" text="Update" />
-    <Button fx:id="deleteLesseeBtn" layoutX="332.0" layoutY="70.0" mnemonicParsing="false" onAction="#deleteLessee" prefHeight="25.0" prefWidth="56.0" text="Delete" />
-    <TableView fx:id="lesseeTable" editable="true" layoutX="193.0" layoutY="102.0" prefHeight="285.0" prefWidth="393.0" tableMenuButtonVisible="true">
+    <Button fx:id="deleteLesseeBtn" layoutX="332.0" layoutY="70.0" mnemonicParsing="false" onAction="#deleteLessee" prefHeight="25.0" prefWidth="83.0" text="End Lease" />
+    <TableView fx:id="lesseeTable" editable="true" layoutX="193.0" layoutY="102.0" prefHeight="285.0" prefWidth="481.0" tableMenuButtonVisible="true">
         <columns>
             <TableColumn fx:id="lesseeUnitColumn" prefWidth="57.0" text="Unit" />
             <TableColumn fx:id="lesseeNameColumn" prefWidth="75.0" text="Name" />
@@ -67,7 +67,8 @@
             <TableColumn fx:id="lesseeActiveColumn" prefWidth="75.0" text="Active" />
         </columns>
       </TableView>
-      <Button fx:id="searchLesseesBtn" layoutX="396.0" layoutY="70.0" mnemonicParsing="false" onAction="#searchLessees" prefHeight="25.0" prefWidth="139.0" text="Search All Lessees" />
-      <Button fx:id="paymentBtn" layoutX="440.0" layoutY="41.0" mnemonicParsing="false" onAction="#pmtShowView" text="Payment" />
+      <Button fx:id="searchLesseesBtn" layoutX="434.0" layoutY="70.0" mnemonicParsing="false" onAction="#searchLessees" prefHeight="25.0" prefWidth="139.0" text="Display All Lessees" />
+      <Button fx:id="paymentBtn" layoutX="573.0" layoutY="29.0" mnemonicParsing="false" onAction="#pmtShowView" text="Payment" />
+      <ComboBox fx:id="cmbLeasedUnits" layoutX="445.0" layoutY="29.0" prefHeight="25.0" prefWidth="110.0" />
    </children>
 </AnchorPane>
