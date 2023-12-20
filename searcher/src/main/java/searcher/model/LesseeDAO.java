@@ -59,7 +59,7 @@ public class LesseeDAO {
             //Return lessee object
             return lessee;
         } catch (SQLException e) {
-            System.out.println("While searching a lessee with " + lesseeId + " id, an error occurred: " + e);
+            System.out.println("While searching for lessee named " + lesseeName + " id, an error occurred: " + e);
             //Return exception
             throw e;
         }
@@ -171,6 +171,21 @@ public class LesseeDAO {
             DBUtil.dbExecuteUpdate(updateStmt);
         } catch (SQLException e) {
             System.out.print("Error occurred while UPDATE Operation: " + e);
+            throw e;
+        }
+    }
+
+    //*************************************
+    //Get lesseeId from name
+    //*************************************
+    public static int getLesseeIdFromName (String lesseeName) throws SQLException, ClassNotFoundException {
+        //Declare a sql statement using stored procedure procDeactivateLessee
+        String sqlStmt = "CALL procGetLesseeIdFromName(?)";
+        //Execute sql operation
+        try {
+            return DBUtil.dbExecuteProcedure(sqlStmt, lesseeName);
+        } catch (SQLException e) {
+            System.out.print("Error occurred while using stored procedure procDeactivateLessee: " + e);
             throw e;
         }
     }
