@@ -17,11 +17,9 @@ import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 
-import java.time.Instant;
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.time.ZoneId;
-import java.util.Locale;
 
 import searcher.model.Lessee;
 import searcher.model.LesseeDAO;
@@ -30,7 +28,7 @@ import searcher.util.DBUtil;
 
 import java.util.Date;
 import java.sql.SQLException;
-import java.text.NumberFormat;
+import java.sql.ResultSet;
 
 public class LesseeController {
     
@@ -38,7 +36,7 @@ public class LesseeController {
     @FXML
     private TextField nameText;
     @FXML
-    private ComboBox<String> cmbUnit;
+    private ComboBox<String> cmbAvailUnits;
     @FXML
     private TextField addrL1Text;
     @FXML
@@ -54,9 +52,11 @@ public class LesseeController {
     @FXML
     private TextArea resultArea;
     @FXML
-    private TextField lesseeIdText;
+    private TextField lesseeNameText;
     @FXML
-    private TextField newPhoneText;
+    private TextField searchPhoneText;
+    @FXML
+    private ComboBox<String> cmbLeasedUnits;
     @FXML
     private TableView<Lessee> lesseeTable;
     @FXML
@@ -75,16 +75,53 @@ public class LesseeController {
     private TableColumn<Lessee, Integer> lesseeZipColumn;
     @FXML
     private TableColumn<Lessee, String> lesseePhoneColumn;
+    
+    //Initializing the controller class.
+    //This method is automatically called after the fxml file has been loaded.
     @FXML
-    private TableColumn<Lessee, Boolean> lesseeActiveColumn;
+    private void initialize () throws SQLException, ClassNotFoundException {
+        /*
+        The setCellValueFactory(...) that we set on the table columns are used to determine
+        which field inside the Lessee objects should be used for the particular column.
+        The arrow -> indicates that we're using a Java 8 feature called Lambdas.
+        (Another option would be to use a PropertyValueFactory, but this is not type-safe
+        We're only using StringProperty values for our table columns in this example.
+        When you want to use IntegerProperty or DoubleProperty, the setCellValueFactory(...)
+        must have an additional asObject():
+        */
+        lesseeUnitColumn.setCellValueFactory(cellData -> cellData.getValue().unitLabelProperty());
+        lesseeNameColumn.setCellValueFactory(cellData -> cellData.getValue().lesseeNameProperty());
+        lesseeAddrL1Column.setCellValueFactory(cellData -> cellData.getValue().addrL1Property());
+        lesseeAddrL2Column.setCellValueFactory(cellData -> cellData.getValue().addrL2Property());
+        lesseeCityColumn.setCellValueFactory(cellData -> cellData.getValue().cityProperty());
+        lesseeStateColumn.setCellValueFactory(cellData -> cellData.getValue().stateProperty());
+        lesseeZipColumn.setCellValueFactory(cellData -> cellData.getValue().zipProperty().asObject());
+        lesseePhoneColumn.setCellValueFactory(cellData -> cellData.getValue().phoneProperty());
+        
+        //populate combo boxes
+        try {
+            ResultSet rsAvailUnits = LesseeDAO.getAllAvailableUnits();
+            while (rsAvailUnits.next()) {
+                cmbAvailUnits.getItems().addAll(rsAvailUnits.getString("label"));
+            }
+            ResultSet rsLeasedUnits = LesseeDAO.getAllLeasedUnits();
+            while (rsLeasedUnits.next()) {
+                cmbLeasedUnits.getItems().addAll(rsLeasedUnits.getString("label"));
+            }
+        }  catch (SQLException e) {
+            System.out.println("SQL select operation to fill combo boxes has failed: " + e);
+            //Return exception
+            throw e;
+        }
+    }
 
     //Search a lessee
     @FXML
     private void searchLessee (ActionEvent actionEvent) throws ClassNotFoundException, SQLException {
         try {
             //Get Lessee information
-            Integer lesseeID = Integer.parseInt(lesseeIdText.getText());
-            Lessee lessee = LesseeDAO.searchLessee(lesseeID);
+            String lesseeName = lesseeNameText.getText();
+            Lessee lessee = LesseeDAO.searchLessee(lesseeName);
             if (lessee != null) {
                 System.out.println(lessee.getUnitLabel());
             }
@@ -111,42 +148,6 @@ public class LesseeController {
         }
     }
     
-    //Initializing the controller class.
-    //This method is automatically called after the fxml file has been loaded.
-    @FXML
-    private void initialize () throws SQLException, ClassNotFoundException {
-        /*
-        The setCellValueFactory(...) that we set on the table columns are used to determine
-        which field inside the Lessee objects should be used for the particular column.
-        The arrow -> indicates that we're using a Java 8 feature called Lambdas.
-        (Another option would be to use a PropertyValueFactory, but this is not type-safe
-        We're only using StringProperty values for our table columns in this example.
-        When you want to use IntegerProperty or DoubleProperty, the setCellValueFactory(...)
-        must have an additional asObject():
-        */
-        lesseeUnitColumn.setCellValueFactory(cellData -> cellData.getValue().unitLabelProperty());
-        lesseeNameColumn.setCellValueFactory(cellData -> cellData.getValue().lesseeNameProperty());
-        lesseeAddrL1Column.setCellValueFactory(cellData -> cellData.getValue().addrL1Property());
-        lesseeAddrL2Column.setCellValueFactory(cellData -> cellData.getValue().addrL2Property());
-        lesseeCityColumn.setCellValueFactory(cellData -> cellData.getValue().cityProperty());
-        lesseeStateColumn.setCellValueFactory(cellData -> cellData.getValue().stateProperty());
-        lesseeZipColumn.setCellValueFactory(cellData -> cellData.getValue().zipProperty().asObject());
-        lesseePhoneColumn.setCellValueFactory(cellData -> cellData.getValue().phoneProperty());
-        lesseeActiveColumn.setCellValueFactory(cellData -> cellData.getValue().activeProperty().asObject());
-
-        //populate combo box with unit titles
-        try {
-            ResultSet rsAvailUnits = LesseeDAO.getAllAvailableUnits();
-            while (rsAvailUnits.next()) {
-                cmbUnit.getItems().addAll(rsAvailUnits.getString("label"));
-            }
-        }  catch (SQLException e) {
-            System.out.println("SQL select operation to fill combo box lessee availables has failed: " + e);
-            //Return exception
-            throw e;
-        }
-    }
-
     //Show payment view
     @FXML
     private void pmtShowView () throws IOException {
@@ -195,15 +196,15 @@ public class LesseeController {
 
     //Update lessee's phone number with the phone number which is written on phoneText field
     @FXML
-    private void updateLesseePhone (ActionEvent actionEvent) throws SQLException, ClassNotFoundException {
-        try {
-            LesseeDAO.updateLesseePhone(Integer.parseInt(lesseeIdText.getText()), phoneText.getText());
-            resultArea.setText("Phone number has been updated for, lessee id: " + lesseeIdText.getText() + "\n");
-        } catch (SQLException e) {
-            resultArea.setText("Problem occrurred while updating phone number " + e);
-            throw e;
-        }
-    }
+    //private void updateLesseePhone (ActionEvent actionEvent) throws SQLException, ClassNotFoundException {
+    //    try {
+    //        LesseeDAO.updateLesseePhone(Integer.parseInt(lesseeIdText.getText()), phoneText.getText());
+    //        resultArea.setText("Phone number has been updated for, lessee id: " + lesseeIdText.getText() + "\n");
+    //    } catch (SQLException e) {
+    //        resultArea.setText("Problem occrurred while updating phone number " + e);
+    //        throw e;
+    //    }
+    //}
 
     static int getLastDayOfMonth(YearMonth date) {
         return date.atEndOfMonth().getDayOfMonth();
@@ -213,7 +214,7 @@ public class LesseeController {
     @FXML
     private void insertLessee (ActionEvent actionEvent) throws ClassNotFoundException, SQLException {
         if ((nameText.getText() != null) && (phoneText.getText() != null)) {
-            String unitLabel = unitText.getText().toLowerCase();
+            String unitLabel = cmbAvailUnits.getValue();
             //******************** 
             //** See if unit is available or make unit a combobox
             //********************
@@ -255,10 +256,11 @@ public class LesseeController {
             dialogg.showAndWait();
             // zero out textfields
             nameText.setText("");
-            cmbUnit.setText("");
+            cmbAvailUnits.setValue("");
             addrL1Text.setText("");
             addrL2Text.setText("");
             cityText.setText("");
+            stateText.setText("");
             zipText.setText("");
             phoneText.setText("");
         }
@@ -269,8 +271,8 @@ public class LesseeController {
     private void deleteLessee(ActionEvent actionEvent) throws ClassNotFoundException, SQLException {
         try {
             //Delete lessee info
-            LesseeDAO.deleteLesseeWithId(lesseeIdText.getText());
-            resultArea.setText("Lessee deleted! Lessee id: " + lesseeIdText.getText() + "\n");
+            //LesseeDAO.deleteLesseeWithId(lesseeIdText.getText());
+            //resultArea.setText("Lessee deleted! Lessee id: " + lesseeIdText.getText() + "\n");
         } catch (SQLException e) {
             e.printStackTrace();
             resultArea.setText("Error occurred while deleting lessee from DB.\n" + e);
