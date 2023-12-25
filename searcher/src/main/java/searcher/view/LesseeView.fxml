@@ -16,9 +16,9 @@
    <children>
     <VBox layoutX="9.0" layoutY="28.0" prefWidth="67.0" spacing="12.0">
         <children>
-           <Label text="Name" />
-           <Label text="Unit" />
-           <Label text="Addr Line1" />
+            <Label text="Name" />
+            <Label text="Unit" />
+            <Label text="Addr Line1" />
             <Label text="Addr Line2" />
             <Label text="City" />
             <Label text="State" />
@@ -28,9 +28,9 @@
     </VBox>
     <VBox layoutX="81.0" layoutY="24.0" prefHeight="228.0" prefWidth="95.0" spacing="4.0">
         <children>
-           <TextField fx:id="nameText" prefHeight="25.0" prefWidth="79.0" promptText="Name" />
-           <ComboBox fx:id="cmbAvailUnits" prefHeight="25.0" prefWidth="79.0" />
-           <TextField fx:id="addrL1Text" prefHeight="25.0" prefWidth="79.0" promptText="Addr Line1" />
+            <TextField fx:id="nameText" prefHeight="25.0" prefWidth="79.0" promptText="Name" />
+            <ComboBox fx:id="cmbAvailUnits" prefHeight="25.0" prefWidth="79.0" />
+            <TextField fx:id="addrL1Text" prefHeight="25.0" prefWidth="79.0" promptText="Addr Line1" />
             <TextField fx:id="addrL2Text" prefHeight="25.0" prefWidth="79.0" promptText="Addr Line2" />
             <TextField fx:id="cityText" prefHeight="25.0" prefWidth="79.0" promptText="City" />
             <TextField fx:id="stateText" prefHeight="25.0" prefWidth="79.0" promptText="State" />
