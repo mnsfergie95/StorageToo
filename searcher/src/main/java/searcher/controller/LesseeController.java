@@ -270,7 +270,11 @@ public class LesseeController {
     @FXML
     private void deleteLessee(ActionEvent actionEvent) throws ClassNotFoundException, SQLException {
         try {
-            //Delete lessee info
+            //Deactive lessee
+            String name = lesseeNameText.getText();
+            if (name != null) {
+                LesseeDAO.getLesseeIdFromName(name);
+            }
             //LesseeDAO.deleteLesseeWithId(lesseeIdText.getText());
             //resultArea.setText("Lessee deleted! Lessee id: " + lesseeIdText.getText() + "\n");
         } catch (SQLException e) {
