@@ -138,7 +138,7 @@ DELIMITER ;
 /*!50003 SET sql_mode              = 'NO_AUTO_VALUE_ON_ZERO' */ ;
 DELIMITER ;;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `procListAllAvailUnits`()
-BEGIN	SELECT label FROM unit LEFT JOIN lessee ON lessee.unitid = unit.unitid 	WHERE lessee.lesseeid IS NULL OR lessee.active = 0;END ;;
+BEGIN	SELECT label FROM unit LEFT JOIN lessee ON lessee.unit_id = unit.unitid 	WHERE lessee.lessee_id IS NULL OR lessee.active = 0;END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
@@ -254,7 +254,7 @@ DELIMITER ;
 /*!50003 SET sql_mode              = 'NO_AUTO_VALUE_ON_ZERO' */ ;
 DELIMITER ;;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `procSearch`(  Name VARCHAR(30),  Unit VARCHAR(5),  Phone VARCHAR(15) )
-BEGIN	SELECT lessee.*, unit.sizeid			FROM lessee JOIN unit ON lessee.unitid = unit.unitid	WHERE lessee.unitid = Unit	OR	lessee.lesseename = Name	OR	lessee.phone = Phone;END ;;
+BEGIN	SELECT lessee.* FROM lessee JOIN unit ON lessee.unit_id = unit.unitid	WHERE unit.label = Unit	OR	lessee.lesseename = Name	OR	lessee.phone = Phone;END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
