@@ -110,6 +110,79 @@ public class DBUtil {
         }
     }
 
+    //Execute stored procedure
+    public static Integer dbExecuteProcedureGetLesseeIdFromName(String sqlStmt, String param1) throws SQLException, ClassNotFoundException {
+        //Declare statement as null
+        CallableStatement stmt = null;
+        try {
+            //Connect to DB (Establish Mysql Connection)
+            dbConnect();
+            //Create Statement
+            stmt = conn.prepareCall(sqlStmt);
+            //Pass parameter
+            stmt.setString(1, param1);
+            stmt.registerOutParameter(2, java.sql.Types.INTEGER);
+            //Run executeUpdate operation with given sql statement
+            stmt.executeUpdate();
+            return stmt.getInt(2);
+        } catch (SQLException e) {
+            System.out.println("Problem occurred at dbExecuteProcedureGetLesseeIdFromName operation : " + e);
+            throw e;
+        }
+
+    }
+
+    //Execute stored procedure procAddLessee
+    public static void dbExecuteProcedureAddLessee(String sqlStmt, String label, String name, String addrL1, String addrL2, String city, String state,  Integer zip, String phone) throws SQLException, ClassNotFoundException {
+        //Declare statement as null
+        CallableStatement stmt = null;
+        try {
+            //Connect to DB (Establish Mysql Connection)
+            dbConnect();
+            //Create Statement
+            stmt = conn.prepareCall(sqlStmt);
+            //Pass parameters
+            stmt.setString(1, name);
+            stmt.setString(2, addrL1);
+            stmt.setString(3, addrL2);
+            stmt.setString(4, city);
+            stmt.setString(5, state);
+            stmt.setInt(6, zip);
+            stmt.setString(7, phone);
+            stmt.setString(8, label); 
+            //Run executeUpdate operation with given sql statement
+            stmt.executeUpdate();
+            return;
+        } catch (SQLException e) {
+            System.out.println("Problem occurred at dbExecuteProcedureAddLessee operation : " + e);
+            throw e;
+        }
+
+    }
+
+    //Execute stored procedure procSearch
+    public static ResultSet dbExecuteProcedureSearchLessee(String sqlStmt, String unitLabel, String name, String phone) throws SQLException, ClassNotFoundException {
+        //Declare statement as null
+        CallableStatement stmt = null;
+        try {
+            //Connect to DB (Establish Mysql Connection)
+            dbConnect();
+            //Create Statement
+            stmt = conn.prepareCall(sqlStmt);
+            //Pass parameters
+            stmt.setString(1, name);
+            stmt.setString(2, unitLabel);
+            stmt.setString(3, phone);
+            //Run executeUpdate operation with given sql statement
+            stmt.executeUpdate();
+            ResultSet rsReturn = stmt.getResultSet();
+            return rsReturn;
+        } catch (SQLException e) {
+            System.out.println("Problem occurred at dbExecuteProcedureAddLessee operation : " + e);
+            throw e;
+        }
+    }
+     
     //DB deactivate Lessee Paramaterized Query
     public static void dbDeactivateLessee(String sqlStmt, int num) throws SQLException, ClassNotFoundException {
         System.out.println(sqlStmt + " ** " + num);
@@ -123,8 +196,6 @@ public class DBUtil {
             //Pass parameter
             stmt.setInt(1, num);
             //Run executeUpdate operation with given sql statement
-            //int rowsAffected = stmt.executeUpdate();
-            //System.out.println("rowsAffected is " + rowsAffected);
             stmt.executeUpdate();
         } catch (SQLException e) {
             System.out.println("Problem occurred at dbDeactivateLessee operation : " + e);
@@ -151,7 +222,7 @@ public class DBUtil {
             //Convert nextDue to java.sql.Date
             java.sql.Date sqlNextDue = java.sql.Date.valueOf(nextDue);
             //Establish sql string
-            String sqlStmt = "{CALL procCommitPmt(?,?,?,?)}";
+            String sqlStmt = "CALL procCommitPmt(?,?,?,?)";
             //Connect to DB (Establish Mysql Connection)
             dbConnect();
             //Create Statement
