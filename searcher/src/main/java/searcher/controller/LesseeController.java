@@ -26,6 +26,9 @@ import searcher.model.LesseeDAO;
 import searcher.model.PaymentDAO;
 import searcher.util.DBUtil;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.Scanner;
 import java.util.Date;
 import java.sql.SQLException;
 import java.sql.ResultSet;
@@ -118,19 +121,26 @@ public class LesseeController {
     //Search a lessee
     @FXML
     private void searchLessee (ActionEvent actionEvent) throws ClassNotFoundException, SQLException {
-        try {
-            //Get Lessee information
-            String lesseeName = lesseeNameText.getText();
-            Lessee lessee = LesseeDAO.searchLessee(lesseeName);
-            if (lessee != null) {
-                System.out.println(lessee.getUnitLabel());
+        if ((lesseeNameText == null) && (phoneText == null) && (cmbLeasedUnits.getValue() == null)) { 
+            //error: have result area say need info to search from
+            resultArea.setText("Please enter a name, a phone number, or pick a unit to search for lessee info.");
+        } else {
+            try {
+                //Get Lessee information
+                String label = cmbLeasedUnits.getValue();
+                String lesseeName = lesseeNameText.getText();
+                String phone = searchPhoneText.getText();
+                Lessee lessee = LesseeDAO.searchLessee(label, lesseeName, phone);
+                if (lessee != null) {
+                    System.out.println(lessee.getUnitLabel());
+                }
+                //Populate Lessee on TableView and Display on TextArea
+                populateAndShowLessee(lessee);
+            } catch (SQLException e) {
+                e.printStackTrace();
+                resultArea.setText("Error occurred while getting lessee information from DB.\n" + e);
+                throw e;
             }
-            //Populate Lessee on TableView and Display on TextArea
-            populateAndShowLessee(lessee);
-        } catch (SQLException e) {
-            e.printStackTrace();
-            resultArea.setText("Error occurred while getting lessee information from DB.\n" + e);
-            throw e;
         }
     }
     
@@ -173,7 +183,7 @@ public class LesseeController {
     @FXML
     private void setLesseeInfoToTextArea ( Lessee lessee) {
         resultArea.setText("Name: " + lessee.getLesseeName() + "\n" +
-                "Unit: " + lessee.getUnitId());
+                "Unit: " + lessee.getUnitLabel());
     }
 
     //Populate Lessee for TableView and Display Lessee on TextArea
@@ -194,31 +204,51 @@ public class LesseeController {
         lesseeTable.setItems(lesseeData);
     }
 
-    //Update lessee's phone number with the phone number which is written on phoneText field
-    @FXML
-    //private void updateLesseePhone (ActionEvent actionEvent) throws SQLException, ClassNotFoundException {
-    //    try {
-    //        LesseeDAO.updateLesseePhone(Integer.parseInt(lesseeIdText.getText()), phoneText.getText());
-    //        resultArea.setText("Phone number has been updated for, lessee id: " + lesseeIdText.getText() + "\n");
-    //    } catch (SQLException e) {
-    //        resultArea.setText("Problem occrurred while updating phone number " + e);
-    //        throw e;
-    //    }
-    //}
-
     static int getLastDayOfMonth(YearMonth date) {
         return date.atEndOfMonth().getDayOfMonth();
+    }
+
+    //Update lessee's phone number with the phone number which is written on phoneText field
+    @FXML
+    private void updateLesseePhone (ActionEvent actionEvent) throws SQLException, ClassNotFoundException {
+        try {
+            //LesseeDAO.updateLesseePhone(Integer.parseInt(lesseeIdText.getText()), phoneText.getText());
+            //resultArea.setText("Phone number has been updated for, lessee id: " + lesseeIdText.getText() + "\n");
+            LesseeDAO.updateLesseePhone(1, phoneText.getText());
+        } catch (SQLException e) {
+            resultArea.setText("Problem occrurred while updating phone number " + e);
+            throw e;
+        }
     }
 
     //Add a lessee to DB
     @FXML
     private void insertLessee (ActionEvent actionEvent) throws ClassNotFoundException, SQLException {
-        if ((nameText.getText() != null) && (phoneText.getText() != null)) {
-            String unitLabel = cmbAvailUnits.getValue();
-            //******************** 
-            //** See if unit is available or make unit a combobox
-            //********************
-            //calculate partial payment
+        // User must at least enter a name, phone, and pick a unit
+        String unitLabel = cmbAvailUnits.getValue();
+        String nameStr = nameText.getText();
+        String phoneStr = phoneText.getText();
+        if ((nameStr != null) && (phoneStr != null) && (unitLabel != null)) {
+            // check user input for phone
+            Pattern pattern = Pattern.compile("^((\\(\\d{3}\\))|\\d{3})[- .]?\\d{3}[- .]?\\d{4}$");
+            Matcher matcher = pattern.matcher(phoneStr);
+            if (!matcher.matches()) {
+                resultArea.setText("Invalid phone number entered.  Please fix.");
+                return;
+            }
+            // check user input for zip
+            int zip = 0;
+            String zipStr = zipText.getText();
+            Scanner sc = new Scanner(zipStr);
+            if (sc.hasNextInt()) {
+                zip = sc.nextInt();
+                sc.close();
+            } else {
+                sc.close();
+                resultArea.setText("Invalid zip code entered. Please fix.");
+                return;
+            }
+            // calculate partial payment
             Date date = new Date();
             YearMonth today = YearMonth.from(date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
             LocalDate hoy = LocalDate.now();
@@ -237,15 +267,13 @@ public class LesseeController {
             dialog.showAndWait();
             try {
                 //Insert Lessee info
-                Boolean yes = true;
-                Integer unitID = LesseeDAO.getUnitID(unitLabel);
-                Integer zip = Integer.parseInt(zipText.getText());
-                LesseeDAO.insertLessee(unitID, nameText.getText(), addrL1Text.getText(), addrL2Text.getText(), cityText.getText(), stateText.getText(), zip, phoneText.getText(), yes);
+                LesseeDAO.insertLessee(unitLabel, nameStr, addrL1Text.getText(), addrL2Text.getText(), cityText.getText(), stateText.getText(), zip, phoneText.getText());
                 //Add partial pmt to payment table in DB
                 DBUtil.dbCommitPmt(unitLabel, partialPmt, firstOfThisMonth);
             } catch (SQLException e) {
                 e.printStackTrace();
                 resultArea.setText("Error occurred while adding lessee to DB.\n" + e);
+                return;
             }
             //popup a dialog showing successful lessee addition to DB 
             Dialog<String> dialogg = new Dialog<String>();
@@ -263,6 +291,10 @@ public class LesseeController {
             stateText.setText("");
             zipText.setText("");
             phoneText.setText("");
+            // send a success message
+            resultArea.setText("Lessee successfully added to DB.");
+        } else {
+            resultArea.setText("Must enter a name, phone, and pick a unit to satisfy minimum data requirement.");
         }
     }
 
