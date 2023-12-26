@@ -47,13 +47,13 @@ public class LesseeDAO {
     //*******************************
     //SELECT a Lessee
     //*******************************
-    public static Lessee searchLessee (String lesseeName) throws SQLException, ClassNotFoundException {
-        //Declare a SELECT statement
-        String selectStmt = "SELECT * FROM lessee LEFT JOIN unit ON lessee.unit_id = unit.unitid WHERE lesseename="+lesseeName;
-        //Execute SELECT statement
+    public static Lessee searchLessee (String unitLabel, String lesseeName, String phone) throws SQLException, ClassNotFoundException {
+        //Declare a sql statement
+        String sqlStmt = "CALL procSearch(?,?,?)";
+        //Execute stored procedure
         try {
             //Get ResultSet from dbExecuteQuery method
-            ResultSet rsLessee = DBUtil.dbExecuteQuery(selectStmt);
+            ResultSet rsLessee = DBUtil.dbExecuteProcedureSearchLessee(sqlStmt, unitLabel, lesseeName, phone);
             //Send ResultSet to the getLesseeFromResultSet method and get lessee object
             Lessee lessee = getLesseeFromResultSet(rsLessee);
             //Return lessee object
@@ -180,10 +180,10 @@ public class LesseeDAO {
     //*************************************
     public static int getLesseeIdFromName (String lesseeName) throws SQLException, ClassNotFoundException {
         //Declare a sql statement using stored procedure procDeactivateLessee
-        String sqlStmt = "CALL procGetLesseeIdFromName(?)";
+        String sqlStmt = "CALL procGetLesseeIdFromName(?,?)";
         //Execute sql operation
         try {
-            return DBUtil.dbExecuteProcedure(sqlStmt, lesseeName);
+            return DBUtil.dbExecuteProcedureGetLesseeIdFromName(sqlStmt, lesseeName);
         } catch (SQLException e) {
             System.out.print("Error occurred while using stored procedure procDeactivateLessee: " + e);
             throw e;
@@ -211,13 +211,11 @@ public class LesseeDAO {
     //*************************************
     //INSERT a lessee
     //*************************************
-    public static void insertLessee (Integer unitID, String name, String addrL1, String addrL2, String city, String state, Integer zip, String phone, Boolean active) throws SQLException, ClassNotFoundException {
+    public static void insertLessee (String label, String name, String addrL1, String addrL2, String city, String state, Integer zip, String phone) throws SQLException, ClassNotFoundException {
         //Declare an INSERT statement
-        String updateStmt = "INSERT INTO lessee VALUES (0, "+unitID+", '"+name+"', '"+addrL1+"', '"+addrL2+"', '"+city+"', '"+state+"', "+zip+", '"+phone+"', "+active+")";
-        
-        //Execute UPDATE operation
+        String updateStmt = "CALL procAddLessee(?,?,?,?,?,?,?,?)";
         try {
-            DBUtil.dbExecuteUpdate(updateStmt);
+            DBUtil.dbExecuteProcedureAddLessee(updateStmt, label, name, addrL1, addrL2, city, state, zip, phone);
         } catch (SQLException e) {
             System.out.print("Error occurred while UPDATE Operation: " + e);
             throw e;
@@ -225,3 +223,5 @@ public class LesseeDAO {
     }
 
 }
+
+
