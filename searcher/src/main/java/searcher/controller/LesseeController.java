@@ -229,24 +229,27 @@ public class LesseeController {
         String nameStr = nameText.getText();
         String phoneStr = phoneText.getText();
         if ((nameStr != null) && (phoneStr != null) && (unitLabel != null)) {
-            // check user input for phone
+            // check user input for phone and format it to (###) ###-####
             Pattern pattern = Pattern.compile("^((\\(\\d{3}\\))|\\d{3})[- .]?\\d{3}[- .]?\\d{4}$");
             Matcher matcher = pattern.matcher(phoneStr);
             if (!matcher.matches()) {
-                resultArea.setText("Invalid phone number entered.  Please fix.");
+                resultArea.setText("Invalid phone number entered.  Must be seven or ten numbers only or be of this format: (###) ###-####.  Please fix.");
                 return;
             }
+            String phoneFormatted = phoneStr.replaceFirst("(\\d{3})(\\d{3})(\\d+)", "($1) $2-$3");
             // check user input for zip
             int zip = 0;
             String zipStr = zipText.getText();
-            Scanner sc = new Scanner(zipStr);
-            if (sc.hasNextInt()) {
-                zip = sc.nextInt();
-                sc.close();
-            } else {
-                sc.close();
-                resultArea.setText("Invalid zip code entered. Please fix.");
-                return;
+            if (zipStr.length() > 0) {
+                Scanner sc = new Scanner(zipStr);
+                if (sc.hasNextInt()) {
+                    zip = sc.nextInt();
+                    sc.close();
+                } else {
+                    sc.close();
+                    resultArea.setText("Invalid zip code entered. Please fix.");
+                    return;
+                }
             }
             // calculate partial payment
             Date date = new Date();
@@ -265,9 +268,10 @@ public class LesseeController {
             dialog.setContentText("Prorated initial payment is " + partialPmt.toString());
             dialog.getDialogPane().getButtonTypes().add(type);
             dialog.showAndWait();
+            //Insert lessee and partial pmt into DB
             try {
                 //Insert Lessee info
-                LesseeDAO.insertLessee(unitLabel, nameStr, addrL1Text.getText(), addrL2Text.getText(), cityText.getText(), stateText.getText(), zip, phoneText.getText());
+                LesseeDAO.insertLessee(unitLabel, nameStr, addrL1Text.getText(), addrL2Text.getText(), cityText.getText(), stateText.getText(), zip, phoneFormatted);
                 //Add partial pmt to payment table in DB
                 DBUtil.dbCommitPmt(unitLabel, partialPmt, firstOfThisMonth);
             } catch (SQLException e) {

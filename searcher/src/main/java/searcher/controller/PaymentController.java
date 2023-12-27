@@ -87,7 +87,7 @@ public class PaymentController {
                 }
             }
         });
-
+        
         //populate combo box with unit titles
         try {
             ResultSet rsAvailUnits = PaymentDAO.getAllLeasedUnits();
@@ -95,7 +95,7 @@ public class PaymentController {
                 cmbUnit.getItems().addAll(rsAvailUnits.getString("label"));
             }
         }  catch (SQLException e) {
-            System.out.println("SQL combo box select operation has failed: " + e);
+            System.out.println("SQL combo box select operation in PaymentController initialize has failed: " + e);
             //Return exception
             throw e;
         }
@@ -242,7 +242,7 @@ public class PaymentController {
             String date = dateFormat.format(newNextDuueDate);
             Text text3 = new Text("\nDue on " + date);
             text3.setFill(Color.BLACK);
-            textFlow.getChildren().addAll(text1, text2, text3);
+            textFlow.getChildren().addAll(text1, text2, text3);      
         }
         if (daysLate == 99) {
             Text text1 = new Text("Get payment amount returned null");
