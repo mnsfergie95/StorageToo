@@ -1,13 +1,21 @@
 import sys
-from PyQt6.QtWidgets import QApplication, QMainWindow, QMessageBox
-from PyQt6.QtCore import QFile
+from PyQt6.QtWidgets import QApplication, QMainWindow, QMessageBox, QDialog, QWidget
+from PyQt6.QtCore import QFile, Qt
+from PyQt6 import QtCore
 from UI.MainWindow_ui import Ui_MainWindow
+from UI.dlgLogin_ui import Ui_Dialog
 from dbUtil import Database
 #from filename import classname
 import re
 from datetime import datetime, time, date, tzinfo, timedelta
 import calendar
 from LesseeDAO import LesseeDAO
+
+class Dialog(QDialog):
+    def __init__(self):
+        super().__init__()
+        self.ui = Ui_Dialog()
+        self.ui.setupUi(self)
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -76,12 +84,30 @@ class MainWindow(QMainWindow):
             dlg.setWindowTitle("Hello!")
             dlg.setText("Partial payment is " + str(partialPayment))
             dlg.exec()
-            #insert partial payment into db
+            #insert partial payment and lessee into db
+            args = (label, label, partialPayment, input_dt, firstNextMonth, name, window.ui.txtAddrL1.text(), window.ui.txtAddrL2.text(),
+                    window.ui.txtCity.text(), window.ui.txtState.text(), zip, formattedPhone)
+            print(args)
+            LesseeDAO.insertLessee(*args)
             #clear the form values
+            window.ui.cmbUnitsAvail.removeItem(window.ui.cmbUnitsAvail.currentIndex())
+            window.ui.txtName.setText("")
+            window.ui.txtAddrL1.setText("")
+            window.ui.txtAddrL2.setText("")
+            window.ui.txtCity.setText("")
+            window.ui.txtState.setText("")
+            window.ui.txtZip.setText("")
+            window.ui.txtPhone.setText("")
+            #set result area to lessee successfully added to DB!
+            window.ui.textBrowserResult.setText("Lessee successfully added to DB!")
             
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     
+    dialog = Dialog()
+    dialog.setWindowTitle("Login")
+    dialog.exec()
+
     window = MainWindow()
     window.ui.btnAddLessee.clicked.connect(window.insertLessee)
     window.populateCmbAvailUnits()

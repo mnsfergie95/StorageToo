@@ -15,6 +15,7 @@ class Database:
     def __init__(self):
         try:
             self.conn = mysql.connector.connect(**self.config)
+            self.conn.autocommit = False
             self.cursor = self.conn.cursor(buffered=True,dictionary=True)
         except mysql.connector.Error as e:
             print("Error while connecting to MySQL", e)
@@ -63,12 +64,15 @@ class Database:
         try:
             args = (name, addrL1, addrL2, city, state, zipCode, phone, label)
             self.cursor.callproc('procAddLessee', args)
+            self.conn.commit()
         except mysql.connector.Error as e:
             print("Error while inserting new lessee", e)
 
-    def dbCommitPayment(self, whichUnit, amt, firstOfThisMonth):
+    def dbCommitPayment(self, whichUnit, amt, today, firstOfThisMonth):
         try:
-            args = (whichUnit, amt, firstOfThisMonth)
+            args = (whichUnit, amt, today, firstOfThisMonth,)
             self.cursor.callproc('procCommitPmt', args)
+            self.conn.commit()
+            #print("rows affected is ", self.cursor.rowcount)
         except mysql.connector.Error as e:
             print("Error while inserting new lessee", e)
