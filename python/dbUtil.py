@@ -60,6 +60,18 @@ class Database:
         except mysql.connector.Error as e:
             print("Error while getting monthly unit price", e)
 
+    def searchLessee(self, name, label, phone):
+        try:
+            args = (name, label, phone)
+            self.cursor.callproc('procSearch', args)
+            self.cursor.stored_results
+            for result in self.cursor.stored_results():
+                lessee = result.fetchall()
+                self.cursor.close()
+                return lessee
+        except mysql.connector.Error as e:
+            print("Error while inserting new lessee", e)
+
     def insertLessee(self, name, addrL1, addrL2, city, state, zipCode, phone, label):
         try:
             args = (name, addrL1, addrL2, city, state, zipCode, phone, label)
@@ -75,4 +87,18 @@ class Database:
             self.conn.commit()
             #print("rows affected is ", self.cursor.rowcount)
         except mysql.connector.Error as e:
-            print("Error while inserting new lessee", e)
+            print("Error while committing payment", e)
+
+    def getAllLessees(self):
+        try:
+            lessees = []
+            self.cursor.callproc('procGetAllLessees')
+            self.cursor.stored_results
+            for result in self.cursor.stored_results():
+                lessee = result.fetchall()
+                lessees.append(lessee)
+            self.cursor.close()
+            return lessees
+        except mysql.connector.Error as e:
+            print("Error while committing payment", e)
+        pass
