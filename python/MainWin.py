@@ -11,6 +11,7 @@ from datetime import datetime
 import calendar
 from LesseeDAO import LesseeDAO
 from Crypto.Cipher import AES
+from Payment import Payment
 
 class Dialog(QDialog):
     def __init__(self):
@@ -157,6 +158,10 @@ class MainWindow(QMainWindow):
     def lamda(self):
         mult = lambda x, y : x * y
         window.ui.textBrowserResult.setText("mult is " + str(mult(4,7)))
+
+    def payment(self):
+        dlgPmt = Payment()
+        dlgPmt.exec()
                     
 if __name__ == "__main__":
     app = QApplication(sys.argv)
@@ -173,6 +178,7 @@ if __name__ == "__main__":
     window.ui.btnSearchLessee.clicked.connect(window.searchLessee)
     window.ui.btnDisplayAllLessees.clicked.connect(window.showAllLessees)
     window.ui.btnLamda.clicked.connect(window.lamda)
+    window.ui.btnPayment.clicked.connect(window.payment)
     window.populateCmbAvailUnits()
     window.populateCmbLeasedUnits()
     window.show()
