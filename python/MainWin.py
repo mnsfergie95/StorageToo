@@ -161,6 +161,8 @@ class MainWindow(QMainWindow):
 
     def payment(self):
         dlgPmt = Payment()
+        dlgPmt.ui.btnAmtOwed.clicked.connect(dlgPmt.showAmtOwed)
+        dlgPmt.populateCmbLeasedUnits()
         dlgPmt.exec()
                     
 if __name__ == "__main__":
