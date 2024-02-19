@@ -70,7 +70,7 @@ class Database:
                 self.cursor.close()
                 return lessee
         except mysql.connector.Error as e:
-            print("Error while inserting new lessee", e)
+            print("Error while searching lessee", e)
 
     def insertLessee(self, name, addrL1, addrL2, city, state, zipCode, phone, label):
         try:
@@ -80,9 +80,9 @@ class Database:
         except mysql.connector.Error as e:
             print("Error while inserting new lessee", e)
 
-    def dbCommitPayment(self, whichUnit, amt, today, firstOfThisMonth):
+    def dbCommitPayment(self, whichUnit, amt, today, firstOfNextMonth):
         try:
-            args = (whichUnit, amt, today, firstOfThisMonth,)
+            args = (whichUnit, amt, today, firstOfNextMonth,)
             self.cursor.callproc('procCommitPmt', args)
             self.conn.commit()
             #print("rows affected is ", self.cursor.rowcount)
@@ -100,5 +100,49 @@ class Database:
             self.cursor.close()
             return lessees
         except mysql.connector.Error as e:
-            print("Error while committing payment", e)
-        pass
+            print("Error while getting all lessees", e)
+        
+    def getLastPayment(self, whichUnit):
+        try:
+            args = (whichUnit, )
+            self.cursor.callproc('procGenerateLastPayment', args)
+            self.cursor.stored_results
+            for result in self.cursor.stored_results():
+                pmt = result.fetchall()
+            self.cursor.close()
+            return pmt
+        except mysql.connector.Error as e:
+            print("Error while getting last payment", e)
+        
+    def getUnitID(self, label):
+        try:
+            args = (label, )
+            self.cursor.callproc('procFindUid', args)
+            self.cursor.stored_results
+            for result in self.cursor.stored_results():
+                unit_id = result.fetchone()
+            self.cursor.close()
+            return unit_id['unitid']
+        except mysql.connector.Error as e:
+            print("Error while getting last payment", e)
+
+    def deActivate(self, unit_id):
+        try:
+            args = (unit_id, )
+            self.cursor.callproc('procDeactivateLessee', args)
+            self.conn.commit()
+            self.cursor.close()
+        except mysql.connector.Error as e:
+            print("Error while getting last payment", e)
+
+    def getLateFees(self):
+        try:
+            #args = (unit_id, )
+            self.cursor.callproc('procGetLateFees')
+            self.cursor.stored_results
+            for result in self.cursor.stored_results():
+                lateFees = result.fetchall()
+            self.cursor.close()
+            return lateFees
+        except mysql.connector.Error as e:
+            print("Error while getting last payment", e)       
