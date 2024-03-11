@@ -36,6 +36,7 @@ class Ui_Dialog(object):
         self.gridLayout.setContentsMargins(0, 0, 0, 0)
         self.gridLayout.setObjectName("gridLayout")
         self.txtPassword = QtWidgets.QLineEdit(parent=self.gridLayoutWidget)
+        self.txtPassword.setEchoMode(QtWidgets.QLineEdit.EchoMode.Password)
         self.txtPassword.setObjectName("txtPassword")
         self.gridLayout.addWidget(self.txtPassword, 1, 1, 1, 1)
         self.txtUsername = QtWidgets.QLineEdit(parent=self.gridLayoutWidget)

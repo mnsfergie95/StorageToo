@@ -63,6 +63,7 @@ class Database:
     def searchLessee(self, name, label, phone):
         try:
             args = (name, label, phone)
+            print("name is ",name," label is ",label," phone is ",phone)
             self.cursor.callproc('procSearch', args)
             self.cursor.stored_results
             for result in self.cursor.stored_results():
@@ -146,3 +147,16 @@ class Database:
             return lateFees
         except mysql.connector.Error as e:
             print("Error while getting last payment", e)       
+
+    def getPayments(self, unit):
+        try:
+            args = (unit, )
+            self.cursor.callproc('procGetAllPaymentsOnUnit', args)
+            self.cursor.stored_results
+            for result in self.cursor.stored_results():
+                Payments = result.fetchall()
+            self.cursor.close()
+            return Payments
+        except mysql.connector.Error as e:
+            print("Error while getting last payment", e)     
+        pass

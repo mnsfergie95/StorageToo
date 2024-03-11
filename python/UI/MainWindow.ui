@@ -456,7 +456,7 @@ padding:5px;</string>
       </widget>
      </item>
      <item row="1" column="1">
-      <widget class="QLineEdit" name="txtName2">
+      <widget class="QLineEdit" name="txtNameSearch">
        <property name="font">
         <font>
          <pointsize>10</pointsize>

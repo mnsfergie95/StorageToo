@@ -40,12 +40,14 @@ class MainWindow(QMainWindow):
         self.ui.setupUi(self)
 
     def populateCmbAvailUnits(self):
+        window.ui.cmbUnitsAvail.addItem("Select a unit")
         db = Database()
         list = db.populateList_AvailUnits()
         for name in list:
             window.ui.cmbUnitsAvail.addItem(name['label'])
                 
     def populateCmbLeasedUnits(self):
+        window.ui.cmbUnitsLeased.addItem("Select a unit")
         db = Database()
         list = db.populateList_LeasedUnits()
         for name in list:
@@ -74,8 +76,12 @@ class MainWindow(QMainWindow):
 
     ''' search for lessee using unit, name, or phone '''
     def searchLessee(self):
-        unit = window.ui.cmbUnitsLeased.currentText()
-        name = window.ui.txtName.text()
+        if not(window.ui.cmbUnitsLeased.currentText() == "Select a unit"):
+            unit = window.ui.cmbUnitsLeased.currentText()
+        else: 
+            unit = ""
+        name = window.ui.txtNameSearch.text()
+        print("name sent to dbUtil is ",name)
         phone = window.ui.txtPhone.text()
         formattedPhone = ""
         if (phone != ""):
@@ -104,7 +110,7 @@ class MainWindow(QMainWindow):
         name = window.ui.txtName.text()
         phone = window.ui.txtPhone.text()
         window.ui.textBrowserResult.setText("")
-        if ((label is not None) and (name is not None) and (phone is not None)):
+        if ((label != "Select a unit") and (name != "") and (phone != "")):
             #check phone input and format it (###) ###-####
             valid = re.compile(r"^((\(\d{3}\))|\d{3})[- .]?\d{3}[- .]?\d{4}$")
             if (not valid.match(phone)):
@@ -154,6 +160,8 @@ class MainWindow(QMainWindow):
             window.ui.txtPhone.setText("")
             #set result area to lessee successfully added to DB!
             window.ui.textBrowserResult.setText("Lessee successfully added to DB!")
+        else:
+            window.ui.textBrowserResult.setText("A unit must be chosen, a name entered, and a phone number entered")
 
     def lamda(self):
         mult = lambda x, y : x * y
@@ -163,18 +171,21 @@ class MainWindow(QMainWindow):
         dlgPmt = Payment()
         dlgPmt.ui.btnAmtOwed.clicked.connect(dlgPmt.showAmtOwed)
         dlgPmt.ui.btnRecvPmt.clicked.connect(dlgPmt.recvPmt)
+        dlgPmt.ui.btnPmtHistory.clicked.connect(dlgPmt.showPmtHistory)
         dlgPmt.populateCmbLeasedUnits()
         dlgPmt.exec()
                     
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     
+    '''
     dlgLogin = Dialog()
     dlgLogin.setWindowTitle("Login")
     dlgLogin.ui.txtUsername.setFocus()
     dlgLogin.ui.txtUsername.editingFinished.connect(dlgLogin.ui.txtPassword.setFocus)
     dlgLogin.ui.btnLogin.clicked.connect(dlgLogin.checkCredentials)
     dlgLogin.exec()
+    '''
 
     window = MainWindow()
     window.ui.btnAddLessee.clicked.connect(window.insertLessee)

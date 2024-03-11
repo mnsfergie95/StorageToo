@@ -17,6 +17,7 @@ class Payment(QDialog):
         self.ui.setupUi(self)
 
     def populateCmbLeasedUnits(self):
+        self.ui.cmbLeasedUnits.addItem("Select a unit")
         db = Database()
         list = db.populateList_LeasedUnits()
         for name in list:
@@ -30,7 +31,7 @@ class Payment(QDialog):
 
     def showAmtOwed(self):
         whichUnitString = self.ui.cmbLeasedUnits.currentText()
-        if (whichUnitString is not None):
+        if not(whichUnitString == "Select a unit"):
             pmt = PaymentDAO.getLastPayment(whichUnitString)
             late = PaymentDAO.getLateFees()
             #print(late)
@@ -74,14 +75,14 @@ class Payment(QDialog):
                             self.lateAmount = row['lateFee']
                     self.ui.textBrowser.setText("Monthly Amt $"+str(self.monthlyAmt)+"\nLate Fee $"+str(self.lateAmount)+"\nTotal $"+str(self.monthlyAmt+self.lateAmount))
         else:
-            self.ui.textBrowser.setText("No payment for that unit")
+            self.ui.textBrowser.setText("Must select a unit")
                 
     def recvPmt(self):
-        #if textBrowser blank then run showAmtOwed
-        if (self.ui.textBrowser.toPlainText() == ""):
+        #if unit selected then run showAmtOwed
+        whichUnitString = self.ui.cmbLeasedUnits.currentText()
+        if not(whichUnitString == "Select a unit") and (self.ui.textBrowser.toPlainText() == ""):
             self.showAmtOwed()
         #commit payment to db
-        whichUnitString = self.ui.cmbLeasedUnits.currentText()
         amtOwed = self.monthlyAmt + self.lateAmount
         todayDate = date.today()
         PaymentDAO.commitPmt(whichUnitString, amtOwed, todayDate, self.nextDueDate)
@@ -90,6 +91,12 @@ class Payment(QDialog):
         msgBox.setText("Payment successfully added to db!")
         msgBox.exec()
         self.ui.textBrowser.setText("")
+
+    def showPmtHistory(self):
+        whichUnitString = self.ui.cmbLeasedUnits.currentText()
+        PaymentDAO.getPayments(whichUnitString)
+        print("show payments...")
+        pass
                 
                 
                 
