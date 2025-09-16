@@ -1,0 +1,95 @@
+eye file    "D:\\Code\\python\\searcher\\UI\\images\\eye-close.png"
+
+dlgLogin
+
+1)  Stylesheet code in Qt Designer  #labelError {color : red}
+2)  D:\Code\python\searcher\UI>pyuic6 dlgLogin.ui -o dlgLogin_ui.py
+3)  in dlgLogin_ui.py find btnEye and paste in above eye file location
+4)  Save all.  Open MainWin.py and run it.
+
+Backup Aug 24
+    Login and dbUtil massaged.  Now there is a new method isUserInDB.  A check for username and password even entered.  A new invisible
+    label at bottom of dialog named labelError.  If error, they are displayed in red.
+    in db, users was changed.  Now there are columns for id, username, tag, nonce, theKey, and ciphertext.
+    In dbUtil, writeNewAdminPasswordToDB, readUserPassword, isUserInDB all work.    
+    Next:
+        1)put in Admin an addUser method which gets their password also and encrypts and stores everything in db.
+        2)completely massage loginAdmin (don't need it now???)
+        3)in dbUtil, change writeNewAdminPasswordToDB to writeNewUserPasswordToDB
+
+Backup Aug 26
+    addUser complete.  Changed tab order in qt desiner.  Edit...edit tab order.
+
+Backup Aug 28
+    in Code\php\Vers 5.1 Sep 13 2020\WebContent\admin\initCreateUsers.php
+        this yields thusly:
+            // regular user : stouser password is "JuWpeNQxjv87k32@bcE", this one must have execute privileges becuase everything is run
+                on stored procedures
+            // admin user   : stoadmin password is "Zjq&NcB38L1hApgI2kj"
+            // demo user    : user demo with password "password" in users table of db storagetoo
+    modified users and privileges in mysql to match the above lines 26 & 27, now checking my program to see that it uses these users to 
+        connect to mysql
+    in dbUtil added configRegular & configAdmin & parameter in def __init__(self, userType):
+        userType = 'admin' or 'regular' which equates to stoadmin and stouser
+
+Backup Sep 05
+    worked to standardize naming of ui elements in dlgLogin, dlgAdmin, and dlgChangePassword
+    added fetchAllUsers to dbUtil
+    added ChangePassword.py, in __init__ loads combobox with usernames
+    added ChangePassword method to Admin.py
+    added signal for ChangePassword button in dlgAdmin to callAdmin method in MainWin
+    standardized the colors across the various windows & dialogs
+    added RevealPassword1, ...2, ...3 in ChangePassword
+    added signals in Admin for eye buttons in ChangePassword
+    fixed the password echoMode for password qlineedits in ChangePassword
+    need to finish the accept method in ChangePassword
+    need to print a late report
+
+Backup Sep 06
+    ChangePassword.py massaged __init__
+        --fixed tab order
+        --made it so placeholder text "Select a username" is not one of the combobox choices
+    dbUtil.py
+        --eliminated all cursor.close() because got an error about cursor being closed
+        --need to look into persistent connection pooling
+
+Backup Sep 07
+    dbUtil removed self.cursor = self.conn.cursor(buffered=True,dictionary=True) from __init__ method, placed that & cursor.close() in
+        every method
+
+users       password
+    demo    demo
+    james   joker
+    admin   Sharon!354
+    jill    Hillcrest78
+    kate    Sword2025!
+
+Backup Sep 08
+    changed routines in db.  Now there is procGetAllCurrentLessees and procGetAllFormerLessees
+    MainWin.py  changed signals and methods to ShowAllCurrentLessees & ShowAllFormerLessees
+    LesseeDAO.py changed methods to populateCurrentLessees & populateFormerLessees
+    dbUtil.py changed methods to getAllCurrentLessees & getAllFormerLessees
+    Made MainWindow.ui bigger.  Changed buttons to Display Current Lessees & Display Former Lessees
+    want to add change monthly prices maybe in admin module
+    want to add print late report button on payment dialog
+    when adding a lessee use usps two letter state abbreviation code ... DONE
+    want to shrink column state in tablewidget in MainWin ... DONE
+    want to eliminate Active from tablewidget in MainWin ... DONE
+
+Backup Sep 09
+    MainWin insertLessee method...added reg exp to check zip user input
+    added from us_state_abbrev import us_state_to_abbrev at top of MainWin; dictionary of capitalized state names and two letter abbreviations
+    MainWin insertLessee method...stateInput = window.ui.txtState.text().title() #.title() uppercases every word
+    MainWin at top: added  from decimal import Decimal, ROUND_HALF_UP
+    MainWin insertLessee method...now partial payment has two decimal places...partialPayment =  amountPartial.quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)
+    MainWin insertLessee method...now args [sent to LesseeDAO.insertLessee(*args)] no longer has two label args at beginning of list
+    LesseeDAO insertLessee method...eliminated self in method declaration
+    MainWin insertLessee method...firstNextMonth = self.add_months(firstOfThisMonth, 1).date() ... this strips time off and just sends date to db later
+    database...changed column type to char(11) for zip in lessee table; thus allowing dash thus ten character zip
+    MainWin...__init__...self.ui.tableWidget.setSortingEnabled(True) #this enables sorting on any column by clicking on column header
+    MainWin...__init__...adjusted sizes of columns
+
+Backup Sep 11
+    MainWin cmbUnitsAvail & cmbUnitsLeased now use placeholder text in respective populate methods
+    MainWin searchLessee checks currentIndex != -1
+    MainWin Update Lessee button not coded nor End Lease button either
