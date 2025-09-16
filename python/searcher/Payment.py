@@ -22,7 +22,9 @@ class Payment(QDialog):
         print("nextDueDate is ", self.nextDueDate)
 
     def populateCmbLeasedUnits(self):
-        self.ui.cmbLeasedUnits.addItem("Select a unit")
+        self.ui.cmbLeasedUnits.setPlaceholderText("Select a unit") #This won't be included in the list but will give helpful hint
+        self.ui.cmbLeasedUnits.setCurrentIndex(-1)
+        #self.ui.cmbLeasedUnits.addItem("Select a unit")
         db = Database('regular')
         list = db.populateList_LeasedUnits()
         for name in list:
@@ -125,4 +127,5 @@ class Payment(QDialog):
         
 
        
+
     
