@@ -97,8 +97,9 @@ class Payment(QDialog):
 
     def showPmtHistory(self):
         whichUnitString = self.ui.cmbLeasedUnits.currentText()
-        PaymentDAO.getPayments(whichUnitString)
+        PaymentDAO.getPayments(whichUnitString) #returns Payments dictionary
         print("show payments...")
+        #put payments in tableWidget
         pass
 
     def printInvoice(self):
@@ -115,3 +116,4 @@ class Payment(QDialog):
        
 
     
+
