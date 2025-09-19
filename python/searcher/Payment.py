@@ -31,6 +31,8 @@ class Payment(QDialog):
             self.ui.cmbLeasedUnits.addItem(name['label'])
 
     def add_month(self, current_date):
+        # // rounds down, so only when month equals 12 does answer = 1
+        # % is remainder so when month equals 12, 12/12 = 1 remainder 0 then + 1 = 1
         new_date = date(current_date.year + (current_date.month) // 12,
                         (current_date.month) % 12 + 1,
                         current_date.day)
@@ -79,7 +81,7 @@ class Payment(QDialog):
     def recvPmt(self):
         #if unit selected then run showAmtOwed
         whichUnitString = self.ui.cmbLeasedUnits.currentText()
-        if not(self.ui.cmbLeasedUnits.currentIndex == -1):
+        if not(self.ui.cmbLeasedUnits.currentIndex() == -1):
             self.showAmtOwed()
             #commit payment to db
             amtOwed = self.monthlyAmt + self.lateAmount
@@ -111,4 +113,5 @@ class Payment(QDialog):
         
 
        
+
     
