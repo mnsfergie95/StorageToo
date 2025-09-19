@@ -92,4 +92,9 @@ Backup Sep 09
 Backup Sep 11
     MainWin cmbUnitsAvail & cmbUnitsLeased now use placeholder text in respective populate methods
     MainWin searchLessee checks currentIndex != -1
+
+Sep 19
+    had trouble with decimal.Decimal + float in Payment.py last night how did that resolve???
+    made small changes to Payment this morning
+
     MainWin Update Lessee button not coded nor End Lease button either
