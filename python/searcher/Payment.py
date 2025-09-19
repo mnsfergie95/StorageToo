@@ -7,9 +7,9 @@ from PyQt6.QtWidgets import QMessageBox
 import generatePDF
 
 class Payment(QDialog):
-    lateAmount = 0.0
+    lateAmount = float(0.0)
     daysLate = 0
-    monthlyAmt = 0.0
+    monthlyAmt = float(0.0)
     current_date = date.today()
     nextDueDate = date(current_date.year + (current_date.month) // 12,
                         (current_date.month) % 12 + 1,
@@ -36,78 +36,62 @@ class Payment(QDialog):
                         current_date.day)
         return new_date
 
-    def showAmtOwed(self): #should be getAmtOwed, have to fix signal in MainWin towards bottom
+    def getAmtOwed(self):
+        self.lateAmount = 0.0
+        self.monthlyAmt = 0.0
         whichUnitString = self.ui.cmbLeasedUnits.currentText()
-        if not(whichUnitString == "Select a unit"): #fix this with placeholder text
+        if not(self.ui.cmbLeasedUnits.currentIndex() == -1):
             pmt = PaymentDAO.getLastPayment(whichUnitString)
             late = PaymentDAO.getLateFees()
-            #print(late)
-            #return
-            if (pmt != None):
-                self.lateAmount = 0.0
-                self.daysLate = 0
-                monthlyPrice = PaymentDAO.getMonthlyAmt(whichUnitString)
-                self.monthlyAmt = monthlyPrice['monthly_price']
-                currentDueDate = pmt[0]['NextDueDate']
-                self.nextDueDate = self.add_month(currentDueDate)
-                todayDate = date.today()
-                howLate = (todayDate - currentDueDate).days
-                if (howLate < 0):
-                    totalPmtDue = self.monthlyAmt
-                    return totalPmtDue
-                    self.ui.textBrowser.setText("Payment is current. \nMonthly amount is"+str(self.monthlyAmt))
-                if (howLate > 45):
+            self.lateAmount = 0.0
+            self.daysLate = 0
+            monthlyPrice = PaymentDAO.getMonthlyAmt(whichUnitString)
+            self.monthlyAmt = monthlyPrice['monthly_price']
+            currentDueDate = pmt[0]['NextDueDate']
+            self.nextDueDate = self.add_month(currentDueDate)
+            todayDate = date.today()
+            howLate = (todayDate - currentDueDate).days
+            match howLate:
+                case howLate if howLate > 45:
                     self.daysLate = 45
                     for row in late:
                         if row['daysLate'] == 45:
                             self.lateAmount = row['lateFee']
-                    '''#messagebox
-                    msgBox = QMessageBox()
-                    msgBox.setText("More than 45 days late.  Need to evict!")
-                    msgBox.exec()
-                    #send inactive to db
-                    unitID = PaymentDAO.getUnitID(whichUnitString)
-                    evict = PaymentDAO.deActivate(unitID)
-                    #confirmation on eviction
-                    msgBox = QMessageBox()
-                    msgBox.setText("Lessee deactivated from unit: " + whichUnitString)
-                    msgBox.exec()
-                    self.ui.textBrowser.setText("Lessee deactivated from unit: " + whichUnitString) '''
-                    totalPmtDue = self.monthlyAmt + self.lateAmount
-                    return totalPmtDue
-                elif (howLate > 30):
+                case howLate if howLate > 30:
                     self.daysLate = 30
                     for row in late:
                         if row['daysLate'] == 30:
                             self.lateAmount = row['lateFee']
-                    totalPmtDue = self.monthlyAmt + self.lateAmount
-                    return totalPmtDue
-                    self.ui.textBrowser.setText("Monthly Amt $"+str(self.monthlyAmt)+"\nLate Fee $"+str(self.lateAmount)+"\nTotal $"+str(self.monthlyAmt+self.lateAmount))
-                elif (howLate > 15):
+                case howLate if howLate > 15:
                     self.daysLate = 15
                     for row in late:
                         if row['daysLate'] == 15:
-                            self.lateAmount = row['lateFee']
-                    totalPmtDue = self.monthlyAmt + self.lateAmount
-                    return totalPmtDue
-                    self.ui.textBrowser.setText("Monthly Amt $"+str(self.monthlyAmt)+"\nLate Fee $"+str(self.lateAmount)+"\nTotal $"+str(self.monthlyAmt+self.lateAmount))
+                            self.lateAmount = row['lateFee']           
+
+    def showAmtOwed(self):
+        if not(self.ui.cmbLeasedUnits.currentIndex() == -1):
+            self.getAmtOwed()
+            totalAmtOwed = float(self.monthlyAmt) + self.lateAmount
+            self.ui.textBrowser.setText("Monthly Amt $"+str(self.monthlyAmt)+"\nLate Fee $"+str(self.lateAmount)+"\nTotal $"+str(totalAmtOwed))
         else:
             self.ui.textBrowser.setText("Must select a unit")
                 
     def recvPmt(self):
         #if unit selected then run showAmtOwed
         whichUnitString = self.ui.cmbLeasedUnits.currentText()
-        if not(whichUnitString == "Select a unit") and (self.ui.textBrowser.toPlainText() == ""):
+        if not(self.ui.cmbLeasedUnits.currentIndex == -1):
             self.showAmtOwed()
-        #commit payment to db
-        amtOwed = self.monthlyAmt + self.lateAmount
-        todayDate = date.today()
-        PaymentDAO.commitPmt(whichUnitString, amtOwed, todayDate, self.nextDueDate)
-        #popup a dialog showing successful addition to db
-        msgBox = QMessageBox()
-        msgBox.setText("Payment successfully added to db!")
-        msgBox.exec()
-        self.ui.textBrowser.setText("")
+            #commit payment to db
+            amtOwed = self.monthlyAmt + self.lateAmount
+            todayDate = date.today()
+            PaymentDAO.commitPmt(whichUnitString, amtOwed, todayDate, self.nextDueDate)
+            #popup a dialog showing successful addition to db
+            msgBox = QMessageBox()
+            msgBox.setText("Payment successfully added to db!")
+            msgBox.exec()
+            self.ui.textBrowser.setText("")
+        else:
+            self.ui.textBrowser.setText("Must select a unit!")
 
     def showPmtHistory(self):
         whichUnitString = self.ui.cmbLeasedUnits.currentText()
@@ -127,5 +111,4 @@ class Payment(QDialog):
         
 
        
-
     
