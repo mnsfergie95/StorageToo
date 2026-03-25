@@ -13,7 +13,7 @@ from LesseeDAO import LesseeDAO
 from Crypto.Cipher import AES
 from Payment import Payment
 
-class Dialog(QDialog):
+class LoginDialog(QDialog):
     def __init__(self):
         super().__init__()
         self.ui = Ui_Dialog()
@@ -179,7 +179,7 @@ if __name__ == "__main__":
     app = QApplication(sys.argv)
     
     '''
-    dlgLogin = Dialog()
+    dlgLogin = LoginDialog()
     dlgLogin.setWindowTitle("Login")
     dlgLogin.ui.txtUsername.setFocus()
     dlgLogin.ui.txtUsername.editingFinished.connect(dlgLogin.ui.txtPassword.setFocus)
