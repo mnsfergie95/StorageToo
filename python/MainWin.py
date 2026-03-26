@@ -102,14 +102,18 @@ class MainWindow(QMainWindow):
         for lessee in lessees:
             self.populateTableRow(lessee)
         
+    ''' check if unit label is blank '''
+    def checkBlankLabel(label):
+        
 
+    
     ''' Add a lessee to DB '''
     def insertLessee(self):
         # check for minimum data entry requirement...name,unit, and phone
         label = window.ui.cmbUnitsAvail.currentText()
         name = window.ui.txtName.text()
         phone = window.ui.txtPhone.text()
-        window.ui.textBrowserResult.setText("")
+        window.ui.textBrowserResult.setText("") # clear result window
         if ((label != "Select a unit") and (name != "") and (phone != "")):
             #check phone input and format it (###) ###-####
             valid = re.compile(r"^((\(\d{3}\))|\d{3})[- .]?\d{3}[- .]?\d{4}$")
