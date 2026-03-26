@@ -102,10 +102,31 @@ class MainWindow(QMainWindow):
         for lessee in lessees:
             self.populateTableRow(lessee)
         
-    ''' check if unit label, name and phone are all blank '''
-    ''' user must enter one of the three as search criteria '''
+    ''' # check for minimum data entry requirement...name,unit, and phone '''
     def checkUserInputIsBlank(label, name, phone):
-        
+        label = window.ui.cmbUnitsAvail.currentText()
+        name = window.ui.txtName.text()
+        phone = window.ui.txtPhone.text()
+        window.ui.textBrowserResult.setText("") # clear result window
+        if ((label != "Select a unit") and (name != "") and (phone != "")):
+            #check phone input and format it (###) ###-####
+            valid = re.compile(r"^((\(\d{3}\))|\d{3})[- .]?\d{3}[- .]?\d{4}$")
+            if (not valid.match(phone)):
+                window.ui.textBrowserResult.setText("Invalid phone number entered.\nMust be ten digits  or be of this format: (###) ###-####.  Please fix.")
+                return 0
+            formattedPhone = re.sub(r'(\d{3})(\d{3})(\d{4})', r'(\1) \2-\3', phone)
+            #check user input for zip
+            zip = 0
+            zipStr = window.ui.txtZip.text()
+            if (len(zipStr) == 5):
+                try:
+                    zip = int(zipStr)
+                except:
+                    window.ui.textBrowserResult.setText("Invalid zipcode entered.  Please fix.")
+                    return 0
+            else:
+                window.ui.textBrowserResult.setText("Invalid zipcode entered.  Please fix.")
+                return 0
 
     
     ''' Add a lessee to DB '''
