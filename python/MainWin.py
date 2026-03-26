@@ -102,8 +102,9 @@ class MainWindow(QMainWindow):
         for lessee in lessees:
             self.populateTableRow(lessee)
         
-    ''' check if unit label is blank '''
-    def checkBlankLabel(label):
+    ''' check if unit label, name and phone are all blank '''
+    ''' user must enter one of the three as search criteria '''
+    def checkUserInputIsBlank(label, name, phone):
         
 
     
