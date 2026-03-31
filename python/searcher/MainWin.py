@@ -171,10 +171,16 @@ class MainWindow(QMainWindow):
         for lessee in lessees:
             self.populateTableRow(lessee)    
 
-    ''' Add a lessee to DB (new)'''
-    if CheckMinumumDataRequirement
-    if zip
-    if phone
+    ''' check minimum data requirement ( name, unit, and phone ) '''
+    def checkMinimumDataRequirement(self):
+        pass
+    
+    ''' Add a lessee to DB '''
+    ''' NEW '''
+    def insertLessee(self):
+        if CheckMinumumDataRequirement
+    if zip processZip
+    processPhone
      
     ''' Add a lessee to DB '''
     def insertLessee(self):
