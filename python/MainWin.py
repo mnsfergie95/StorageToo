@@ -103,7 +103,7 @@ class MainWindow(QMainWindow):
             self.populateTableRow(lessee)
         
     ''' # check for minimum data entry requirement...name,unit, and phone '''
-    def checkUserInputIsBlank(label, name, phone):
+    def checkIfUserInputIsBlank(label, name, phone):
         label = window.ui.cmbUnitsAvail.currentText()
         name = window.ui.txtName.text()
         phone = window.ui.txtPhone.text()
@@ -118,7 +118,8 @@ class MainWindow(QMainWindow):
             #check user input for zip
             zip = 0
             zipStr = window.ui.txtZip.text()
-            if (len(zipStr) == 5):
+            if (len(zipStr) > 0):
+            if (len(zipStr) == 5): # it will only execute if length of zip is 5
                 try:
                     zip = int(zipStr)
                 except:
