@@ -103,7 +103,7 @@ class MainWindow(QMainWindow):
             self.populateTableRow(lessee)
         
     ''' # check for minimum data entry requirement...name,unit, and phone '''
-    def checkIfUserInputIsBlank(label, name, phone):
+    def checkMinimumDataEntryRequirement():
         label = window.ui.cmbUnitsAvail.currentText()
         name = window.ui.txtName.text()
         phone = window.ui.txtPhone.text()
