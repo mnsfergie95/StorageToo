@@ -173,14 +173,45 @@ class MainWindow(QMainWindow):
 
     ''' check minimum data requirement ( name, unit, and phone ) '''
     def checkMinimumDataRequirement(self):
-        pass
-    
+        label = ""
+        if self.ui.cmbUnitsAvail.currentIndex == -1:
+            label = "default"
+        else:
+            label = window.ui.cmbUnitsAvail.currentText()
+        name = window.ui.txtName.text()
+        phone = window.ui.txtPhone.text()
+        window.ui.textBrowserResult.setText("")
+        if ((label != "default") and (name != "") and (phone != "")):
+            return 1
+        else
+            return 0
+
+    ''' process phone input '''
+    def processPhone(self):
+        #check phone input and format it (###) ###-####
+        valid = re.compile(r"^((\(\d{3}\))|\d{3})[- .]?\d{3}[- .]?\d{4}$")
+        if (not valid.match(phone)):
+            window.ui.textBrowserResult.setText("Invalid phone number entered.\nMust be ten digits  or be of this format: (###) ###-####.  Please fix.")
+            return 0
+        else
+            formattedPhone = re.sub(r'(\d{3})(\d{3})(\d{4})', r'(\1) \2-\3', phone)
+            return 1
+        
     ''' Add a lessee to DB '''
     ''' NEW '''
     def insertLessee(self):
-        if CheckMinumumDataRequirement
-    if zip processZip
-    processPhone
+        minimumData = CheckMinumumDataRequirement()
+        if minimumData:
+            processPhone()
+            if zip validateZip()
+            if state validateState()
+            #calculate partial payment
+            #popup a dialog showing partial payment amt
+            #clear the form values
+            #set result area to lessee successfully added to DB!
+            window.ui.textBrowserResult.setText("Lessee successfully added to DB!")
+        else:
+            window.ui.textBrowserResult.setText("A unit must be chosen, a name entered, and a phone number entered")
      
     ''' Add a lessee to DB '''
     def insertLessee(self):
