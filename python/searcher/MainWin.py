@@ -187,7 +187,7 @@ class MainWindow(QMainWindow):
             return 0
 
     ''' process phone input '''
-    def processPhone(self):
+    def validatePhone(self):
         #check phone input and format it (###) ###-####
         valid = re.compile(r"^((\(\d{3}\))|\d{3})[- .]?\d{3}[- .]?\d{4}$")
         if (not valid.match(phone)):
@@ -196,14 +196,91 @@ class MainWindow(QMainWindow):
         else
             formattedPhone = re.sub(r'(\d{3})(\d{3})(\d{4})', r'(\1) \2-\3', phone)
             return 1
+
+    ''' validate state '''
+    def validateState(self):
+        #validate state user input
+        try:
+            stateInput = window.ui.txtState.text().title()
+            stateAbbrev = us_state_to_abbrev[stateInput]
+        except KeyError as e:
+            msg = "incorrect state input"
+            dlg = QMessageBox(self)
+            dlg.setWindowTitle("Oops!")
+            dlg.setText(msg)
+            dlg.exec()
+            return 0
+        return 1
+
+    ''' validate zip '''
+    def validateZip(self):
+        #check user input for zip
+        zipStr = window.ui.txtZip.text()
+        if zipStr != "":
+            #Validates a US ZIP code (5-digit or ZIP+4 format) using regex.
+            pattern = r"^\d{5}(?:-\d{4})?$"
+            if not (re.match(pattern, zipStr)):
+                window.ui.textBrowserResult.setText("Invalid zipcode entered.  Please fix.")
+                return 0
+            return 1
+
+    ''' calculate partial payment to end of month '''
+    def calculatePartialPayment(self):
+        #calculate partial pmt
+        input_dt = datetime.now()
+        res = calendar.monthrange(input_dt.year, input_dt.month) #Return weekday (0-6 ~ Mon-Sun) and number of days (28-31) for year, month.
+        LastDayOfMonth = res[1]
+        TodayDayOfMonth = input_dt.day
+        DaysLeftInMonth = LastDayOfMonth - TodayDayOfMonth
+        monthlyPrice = float(LesseeDAO.getMonthlyAmt(label)['monthly_price'])
+        amountPartial = Decimal(monthlyPrice * DaysLeftInMonth / LastDayOfMonth)
+        partialPayment =  amountPartial.quantize(Decimal('0.01'), rounding=ROUND_HALF_UP) 
+        firstOfThisMonth = input_dt.replace(day=1)
+        firstNextMonth = self.add_months(firstOfThisMonth, 1).date()
+
+    ''' show partial payment to user '''
+    def showPartialPayment(self):
+        #popup a dialog showing partial payment amt
+        dlg = QMessageBox(self)
+        dlg.setWindowTitle("Hello!")
+        dlg.setText("Partial payment is " + str(partialPayment))
+        dlg.exec()
+
+    ''' add data to db '''
+    def insertDataIntoDB(self):
+        #insert partial payment and lessee into db
+        args = (label, partialPayment, input_dt, firstNextMonth, name, window.ui.txtAddrL1.text(), window.ui.txtAddrL2.text(),
+                window.ui.txtCity.text(), stateAbbrev, zipStr, formattedPhone)
+        LesseeDAO.insertLessee(*args)
+
+    ''' clear form values '''
+    def clearForm(self):
+        #clear the form values
+        window.ui.cmbUnitsAvail.removeItem(window.ui.cmbUnitsAvail.currentIndex())
+        window.ui.txtName.setText("")
+        window.ui.txtAddrL1.setText("")
+        window.ui.txtAddrL2.setText("")
+        window.ui.txtCity.setText("")
+        window.ui.txtState.setText("")
+        window.ui.txtZip.setText("")
+        window.ui.txtPhone.setText("")
+
+    ''' show resultbox '''
+    def displayResult(self):
+        #set result area to lessee successfully added to DB!
+            window.ui.textBrowserResult.setText("Lessee successfully added to DB!")
+        else:
+            window.ui.textBrowserResult.setText("A unit must be chosen, a name entered, and a phone number entered")
         
     ''' Add a lessee to DB '''
     ''' NEW '''
     def insertLessee(self):
         minimumData = CheckMinumumDataRequirement()
         if minimumData:
-            processPhone()
-            if zip validateZip()
+            success = validatePhone()
+            if success:
+                success = validateZip()
+            
             if state validateState()
             #calculate partial payment
             #popup a dialog showing partial payment amt
