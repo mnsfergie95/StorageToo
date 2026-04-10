@@ -172,6 +172,10 @@ class MainWindow(QMainWindow):
             self.populateTableRow(lessee)    
 
     ''' check minimum data requirement ( name, unit, and phone ) '''
+
+    ''' should call this a class lessee '''
+
+    
     def checkMinimumDataRequirement(self):
         label = ""
         if self.ui.cmbUnitsAvail.currentIndex == -1:
@@ -182,7 +186,7 @@ class MainWindow(QMainWindow):
         phone = window.ui.txtPhone.text()
         window.ui.textBrowserResult.setText("")
         if ((label != "default") and (name != "") and (phone != "")):
-            return 1
+            return 1, label, name, phone
         else
             return 0
 
