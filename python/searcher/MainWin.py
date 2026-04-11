@@ -279,6 +279,7 @@ class MainWindow(QMainWindow):
     ''' Add a lessee to DB '''
     ''' NEW '''
     def insertLessee(self):
+        populateNewLessee()
         minimumData = CheckMinumumDataRequirement()
         if minimumData:
             success = validatePhone()
@@ -287,12 +288,15 @@ class MainWindow(QMainWindow):
             
             if state validateState()
             #calculate partial payment
+            calculatePartialPayment()
             #popup a dialog showing partial payment amt
+            showPartialPayment()
+            # insert new lessee into db
+            insertDataIntoDB()
             #clear the form values
+            clearForm()
             #set result area to lessee successfully added to DB!
-            window.ui.textBrowserResult.setText("Lessee successfully added to DB!")
-        else:
-            window.ui.textBrowserResult.setText("A unit must be chosen, a name entered, and a phone number entered")
+            displayResult()
      
     ''' Add a lessee to DB '''
     def insertLessee(self):
